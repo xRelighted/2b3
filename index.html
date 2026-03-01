@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>terminal · kitty portfolio</title>
+  <style>
+    /* reset & fuentes */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Fira Code', 'JetBrains Mono', 'Cascadia Code', 'Courier New', monospace;
+    }
+
+    body {
+      min-height: 100vh;
+      background: radial-gradient(circle at 30% 40%, #0a192f, #030614);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    /* ventana terminal – estilo kitty: transparente, smooth, bordes suaves */
+    .terminal {
+      width: 800px;
+      max-width: 95vw;
+      background-color: rgba(5, 15, 30, 0.72);         /* transparencia elegante */
+      backdrop-filter: blur(8px);                      /* efecto vidrio */
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(52, 102, 204, 0.35);
+      border-radius: 24px;
+      box-shadow: 0 30px 45px -15px rgba(0, 10, 30, 0.8), 0 0 0 1px rgba(100, 160, 255, 0.2) inset;
+      transition: all 0.25s ease;
+      color: #e0f0ff;
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+    }
+
+    .terminal:hover {
+      box-shadow: 0 35px 55px -15px #0a1f3a, 0 0 0 1px #3b82f677 inset;
+    }
+
+    /* barra de título estilo kitty (mac style) */
+    .terminal-header {
+      display: flex;
+      align-items: center;
+      padding: 12px 18px;
+      background: rgba(2, 10, 22, 0.5);
+      border-bottom: 1px solid #1e3a5f;
+      border-radius: 24px 24px 0 0;
+    }
+
+    .window-buttons {
+      display: flex;
+      gap: 8px;
+      margin-right: 16px;
+    }
+
+    .window-buttons span {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      transition: 0.2s;
+    }
+
+    .close { background: #ff5f56; border: 1px solid #bf4038; }
+    .minimize { background: #ffbd2e; border: 1px solid #bf9120; }
+    .maximize { background: #27c93f; border: 1px solid #1b9f2d; }
+
+    .window-title {
+      color: #9bbdf0;
+      font-size: 0.9rem;
+      letter-spacing: 0.5px;
+      text-shadow: 0 0 5px #3b82f6;
+    }
+
+    /* cuerpo de la terminal – scroll suave */
+    .terminal-body {
+      padding: 24px 22px;
+      min-height: 360px;
+      transition: all 0.3s ease-in-out;
+      background: rgba(0, 8, 20, 0.2);
+      font-size: 1.05rem;
+      line-height: 1.6;
+    }
+
+    /* línea de prompt + input */
+    .line {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .prompt {
+      color: #6ea8fe;        /* azul claro */
+      font-weight: 500;
+      text-shadow: 0 0 4px #1e4b8f;
+      white-space: nowrap;
+    }
+
+    /* input falso de terminal */
+    .terminal-input {
+      background: transparent;
+      border: none;
+      outline: none;
+      color: #d7ecff;
+      font-size: 1.05rem;
+      font-family: inherit;
+      flex: 1;
+      min-width: 200px;
+      padding: 4px 0;
+      border-bottom: 1.5px dashed #2f5580;
+      transition: border 0.2s, box-shadow 0.2s;
+    }
+
+    .terminal-input:focus {
+      border-bottom: 1.5px solid #3b82f6;
+      box-shadow: 0 8px 12px -12px #3b82f6;
+    }
+
+    .terminal-input::placeholder {
+      color: #31699e;
+      font-style: italic;
+      font-size: 0.95rem;
+    }
+
+    /* enlaces de youtube editables (zona portfolio) */
+    .youtube-links {
+      margin-bottom: 32px;
+    }
+
+    .link-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 18px;
+      background: rgba(20, 45, 80, 0.3);
+      padding: 8px 14px;
+      border-radius: 16px;
+      border: 1px solid #1f3f64;
+      transition: 0.2s;
+    }
+
+    .link-row:hover {
+      border-color: #3b82f6;
+      background: rgba(25, 60, 110, 0.4);
+      box-shadow: 0 0 10px #1e4a76;
+    }
+
+    .link-input {
+      flex: 1;
+      background: rgba(0, 10, 25, 0.6);
+      border: 1px solid #2f5580;
+      border-radius: 40px;
+      padding: 10px 18px;
+      color: #c0e0ff;
+      font-size: 0.95rem;
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    .link-input:focus {
+      border-color: #7ab0ff;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+      background: #0a1a30;
+    }
+
+    /* botón go con estilo neón azul */
+    .go-btn {
+      background: transparent;
+      border: 1.5px solid #1e4f8a;
+      color: #9ac4ff;
+      font-weight: 600;
+      padding: 8px 22px;
+      border-radius: 40px;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 0.95rem;
+      letter-spacing: 0.5px;
+      transition: 0.2s;
+      backdrop-filter: blur(4px);
+    }
+
+    .go-btn:hover {
+      background: #1e4f8a;
+      color: #e2f0ff;
+      border-color: #7ab0ff;
+      box-shadow: 0 0 15px #3b82f6;
+      transform: scale(1.02);
+    }
+
+    /* sección rango de precios (azul oscuro/claro) */
+    .price-range {
+      background: rgba(8, 22, 45, 0.6);
+      border-radius: 24px;
+      padding: 22px 20px;
+      border: 1px solid #224c7a;
+      margin-top: 8px;
+    }
+
+    .price-range label {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 18px;
+      color: #99c4ff;  /* azul claro */
+      font-size: 1rem;
+      flex-wrap: wrap;
+    }
+
+    /* inputs numéricos con estilo azul */
+    .price-range input[type="number"] {
+      background: #0a1a2f;
+      border: 1.5px solid #1f4980;
+      border-radius: 30px;
+      padding: 8px 18px;
+      color: #d0ecff;
+      font-weight: 500;
+      font-size: 1rem;
+      width: 130px;
+      outline: none;
+      transition: 0.2s;
+    }
+
+    .price-range input[type="number"]:focus {
+      border-color: #6da5ff;
+      box-shadow: 0 0 0 3px #1e4b8f70;
+    }
+
+    .range-display {
+      background: #0d2442;
+      border-radius: 40px;
+      padding: 14px 20px;
+      text-align: center;
+      color: #b8d6ff;
+      border: 1px solid #2f5f9e;
+      font-size: 1.1rem;
+      margin-top: 10px;
+      box-shadow: inset 0 2px 5px #00000030;
+    }
+
+    .range-display span {
+      color: white;
+      font-weight: 700;
+      background: linear-gradient(145deg, #1b4b81, #2b62a0);
+      padding: 3px 12px;
+      border-radius: 40px;
+      margin: 0 4px;
+      border: 1px solid #7bb0ff;
+    }
+
+    /* texto secundario */
+    .ascii-hint {
+      color: #3f78b0;
+      margin-bottom: 18px;
+      border-left: 4px solid #1b4b81;
+      padding-left: 18px;
+      font-style: italic;
+    }
+
+    /* responsive */
+    @media (max-width: 550px) {
+      .terminal-body { padding: 16px; }
+      .link-row { flex-wrap: wrap; }
+      .go-btn { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="terminal">
+    <div class="terminal-header">
+      <div class="window-buttons">
+        <span class="close"></span>
+        <span class="minimize"></span>
+        <span class="maximize"></span>
+      </div>
+      <span class="window-title">🐱 kitty@portfolio:~/start</span>
+    </div>
+    <div class="terminal-body" id="terminal-body">
+      <!-- el contenido se renderiza con js -->
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      const terminalBody = document.getElementById('terminal-body');
+
+      // --- FUNCIONES DE RENDERIZADO ---
+      function renderInitial() {
+        terminalBody.innerHTML = `
+          <div class="ascii-hint">✦ bienvenido a kitty terminal ✦</div>
+          <div class="line">
+            <span class="prompt">usuario@portfolio:~$</span>
+            <input type="text" id="cmd-input" class="terminal-input" placeholder="escribe 'start' y presiona ↵" autofocus>
+          </div>
+          <div style="margin-top: 28px; color: #2f6296; font-size:0.9rem; border-top:1px dashed #1d3d61; padding-top:14px;">
+            ⚡ sistema listo · terminal transparente · colores azul oscuro/claro
+          </div>
+        `;
+
+        const input = document.getElementById('cmd-input');
+        if (input) {
+          input.focus();
+          input.addEventListener('keydown', function onEnter(e) {
+            if (e.key === 'Enter') {
+              const cmd = input.value.trim().toLowerCase();
+              if (cmd === 'start') {
+                renderPortfolio();
+              } else {
+                // pequeño feedback: no pasa nada, pero se puede limpiar
+                input.value = '';
+                input.placeholder = 'comando no reconocido · prueba "start"';
+              }
+            }
+          });
+        }
+      }
+
+      function renderPortfolio() {
+        // contenido principal: 3 youtube links editables + rango de precios debajo
+        terminalBody.innerHTML = `
+          <div style="margin-bottom: 20px; color: #8bb9ff; font-weight: 500;">✦ modo portfolio — enlaces youtube ✦</div>
+
+          <!-- 3 links editables (azul oscuro/claro) -->
+          <div class="youtube-links">
+            <div class="link-row">
+              <input type="text" class="link-input" id="yt1" value="https://youtube.com/watch?v=dQw4w9WgXcQ" placeholder="URL de youtube">
+              <button class="go-btn" data-link="yt1">▶ ir</button>
+            </div>
+            <div class="link-row">
+              <input type="text" class="link-input" id="yt2" value="https://youtube.com/watch?v=2Vv-BfVoq4g" placeholder="URL de youtube">
+              <button class="go-btn" data-link="yt2">▶ ir</button>
+            </div>
+            <div class="link-row">
+              <input type="text" class="link-input" id="yt3" value="https://youtube.com/watch?v=jfKfPfyJRdk" placeholder="URL de youtube">
+              <button class="go-btn" data-link="yt3">▶ ir</button>
+            </div>
+          </div>
+
+          <!-- RANGO DE PRECIOS (abajo de los links) -->
+          <div class="price-range">
+            <div style="margin-bottom: 18px; color: #b2d6ff; font-size:1.1rem;">📊 rango de precios</div>
+            <label>
+              <span>💰 mínimo</span>
+              <input type="number" id="price-min" class="price-min" value="12" min="0" max="500" step="1">
+            </label>
+            <label>
+              <span>💎 máximo</span>
+              <input type="number" id="price-max" class="price-max" value="89" min="0" max="500" step="1">
+            </label>
+            <div class="range-display">
+              <span>🟦 rango seleccionado: $<span id="min-display">12</span> – $<span id="max-display">89</span> 🟦</span>
+            </div>
+            <div style="font-size:0.85rem; margin-top: 14px; color: #4878b0; text-align:right;">
+              ◆ edita los valores · azul oscuro + claro ◆
+            </div>
+          </div>
+
+          <div style="margin-top: 24px; border-top: 1px solid #1e3e62; padding-top: 12px; display: flex; gap: 12px; flex-wrap: wrap;">
+            <span style="background:#0f2a48; padding:4px 16px; border-radius:20px;">links editables ✓</span>
+            <span style="background:#0f2a48; padding:4px 16px; border-radius:20px;">precios interactivos ✓</span>
+          </div>
+        `;
+
+        // --- lógica para botones "Go" (abrir youtube links) ---
+        const goButtons = document.querySelectorAll('.go-btn');
+        goButtons.forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            const linkId = btn.getAttribute('data-link');
+            const inputField = document.getElementById(linkId);
+            if (inputField) {
+              let url = inputField.value.trim();
+              if (url === '') {
+                alert('🔗 introduce un enlace de YouTube');
+                return;
+              }
+              // si no tiene protocolo, agregar https
+              if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                url = 'https://' + url;
+              }
+              window.open(url, '_blank');
+            }
+          });
+        });
+
+        // --- lógica para el rango de precios (actualizar display) ---
+        const minInput = document.getElementById('price-min');
+        const maxInput = document.getElementById('price-max');
+        const minSpan = document.getElementById('min-display');
+        const maxSpan = document.getElementById('max-display');
+
+        function updateRange() {
+          let minVal = parseInt(minInput.value, 10);
+          let maxVal = parseInt(maxInput.value, 10);
+
+          // validar tonterías
+          if (isNaN(minVal)) minVal = 0;
+          if (isNaN(maxVal)) maxVal = 0;
+          if (minVal < 0) minVal = 0;
+          if (maxVal < 0) maxVal = 0;
+          if (minVal > 500) minVal = 500;
+          if (maxVal > 500) maxVal = 500;
+
+          // si min > max, ajustar
+          if (minVal > maxVal) {
+            // opción: invertir valores o forzar igualdad (elegimos corregir min)
+            minVal = maxVal;
+            minInput.value = minVal;
+          }
+
+          minSpan.textContent = minVal;
+          maxSpan.textContent = maxVal;
+        }
+
+        if (minInput && maxInput) {
+          minInput.addEventListener('input', updateRange);
+          maxInput.addEventListener('input', updateRange);
+          // inicializar display
+          updateRange();
+        }
+
+        // pequeños detalles: foco en ningún input en concreto, pero se puede interactuar
+      }
+
+      // --- ARRANQUE: mostramos pantalla inicial ---
+      renderInitial();
+
+      // extra: si por alguna razón se quiere volver a empezar, se podría viajar con comandos,
+      // pero cumplimos con la consigna: escribir start lleva al portfolio.
+      // (podríamos escuchar doble click en el header, pero no es necesario)
+    })();
+  </script>
+</body>
+</html>
