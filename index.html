@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>relighted / 零 · 都市</title>
+    <title> Terminal 桜 · Roblox Scripter</title>
     <style>
         * {
             margin: 0;
@@ -12,419 +12,348 @@
         }
 
         body {
-            background: #030305;
-            color: #e0e0e0;
-            font-family: 'Inter', 'Noto Sans JP', sans-serif;
-            overflow-x: hidden;
-            height: 100vh;
-            perspective: 1px;
-            transform-style: preserve-3d;
+            background-color: #1a1b26; /* fondo oscuro de terminal */
+            font-family: 'Courier New', 'Consolas', 'Monaco', monospace;
+            color: #c0caf5;
+            line-height: 1.6;
+            padding: 2rem 1rem;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-image: radial-gradient(circle at 10% 20%, rgba(158, 167, 255, 0.03) 0%, transparent 30%);
         }
 
-        /* El scroll crea la ilusión de moverse por la ciudad */
-        .city-scroll {
-            height: 500vh;
-            position: relative;
-            transform-style: preserve-3d;
-        }
-
-        /* Cada "distrito" ocupa una pantalla pero con profundidad */
-        .district {
-            position: sticky;
-            top: 0;
-            height: 100vh;
+        .terminal {
+            max-width: 950px;
             width: 100%;
+            background-color: #24283b;
+            border-radius: 12px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 0 1px #414868 inset;
+            overflow: hidden;
+            border-top: 2px solid #bb9af7; /* toque violeta (color cerezo) */
+        }
+
+        /* Barra de título estilo terminal */
+        .title-bar {
+            background: #1f2335;
+            padding: 0.7rem 1.2rem;
             display: flex;
             align-items: center;
-            justify-content: center;
-            transform-style: preserve-3d;
-            will-change: transform;
+            gap: 0.6rem;
+            border-bottom: 1px solid #414868;
         }
 
-        /* Edificios de fondo que se mueven a diferente velocidad */
-        .building-layer {
-            position: absolute;
-            inset: 0;
-            background-repeat: repeat-y;
-            background-position: bottom;
-            opacity: 0.2;
-            pointer-events: none;
-        }
-
-        .layer1 { background-image: linear-gradient(90deg, transparent 90%, #00ffc8 90%); background-size: 50px 100px; transform: translateZ(-2px) scale(2); }
-        .layer2 { background-image: radial-gradient(circle at 10% 50%, #fff 1px, transparent 1px); background-size: 80px 80px; transform: translateZ(-1.5px) scale(1.8); opacity: 0.15; }
-        .layer3 { background-image: repeating-linear-gradient(0deg, #2a2a2a 0px, #2a2a2a 2px, transparent 2px, transparent 30px); transform: translateZ(-1px) scale(1.5); opacity: 0.1; }
-
-        /* Faroles japoneses flotantes */
-        .lantern {
-            position: absolute;
-            width: 40px;
-            height: 60px;
-            background: rgba(255, 180, 100, 0.1);
-            border-radius: 20px 20px 10px 10px;
-            box-shadow: 0 0 30px #ffaa33;
-            animation: lanternFloat 6s infinite alternate;
-        }
-
-        @keyframes lanternFloat {
-            from { transform: translateY(0); }
-            to { transform: translateY(-20px); }
-        }
-
-        /* Contenido de cada distrito */
-        .content-card {
-            background: rgba(5, 5, 10, 0.6);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.03);
-            border-radius: 40px;
-            padding: 3rem;
-            max-width: 800px;
-            width: 90%;
-            box-shadow: 0 30px 50px -30px #00ffc8;
-            transform: translateZ(0.5px) scale(1.2);
-            position: relative;
-            z-index: 10;
-        }
-
-        /* Distrito 1: Entrada a la ciudad */
-        .district-1 {
-            background: radial-gradient(ellipse at 20% 50%, rgba(0,255,200,0.05), transparent 50%);
-        }
-
-        .title {
-            font-size: 5rem;
-            font-weight: 200;
-            letter-spacing: 0.2em;
-            text-align: center;
-            text-shadow: 0 0 20px #00ffc8;
-            animation: flicker 5s infinite;
-        }
-
-        @keyframes flicker {
-            0%, 100% { opacity: 1; }
-            2% { opacity: 0.2; }
-            4% { opacity: 1; }
-            19% { opacity: 1; }
-            20% { opacity: 0.4; }
-            21% { opacity: 1; }
-        }
-
-        .japanese-city {
-            text-align: center;
-            font-size: 1.2rem;
-            color: #aaa;
-            letter-spacing: 0.5em;
-            margin-top: 1rem;
-        }
-
-        /* Distrito 2: Galería de videos (carteles luminosos) */
-        .video-signs {
+        .dots {
             display: flex;
-            gap: 2rem;
-            flex-wrap: wrap;
-            justify-content: center;
+            gap: 0.5rem;
         }
 
-        .sign {
-            width: 280px;
-            height: 180px;
-            border: 2px solid #00ffc8;
-            border-radius: 20px;
-            overflow: hidden;
-            position: relative;
-            box-shadow: 0 0 30px rgba(0,255,200,0.3);
-            transition: 0.4s;
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
         }
 
-        .sign iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-            filter: hue-rotate(90deg) brightness(0.8);
-            transition: 0.4s;
-        }
+        .red { background: #f7768e; }
+        .yellow { background: #e0af68; }
+        .green { background: #9ece6a; }
 
-        .sign:hover {
-            transform: scale(1.1) rotate(1deg);
-            box-shadow: 0 0 50px #00ffc8;
-        }
-
-        .sign:hover iframe {
-            filter: none;
-        }
-
-        .sign-label {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(0,0,0,0.7);
-            backdrop-filter: blur(4px);
-            padding: 0.5rem;
-            text-align: center;
+        .title-text {
+            color: #7982a9;
             font-size: 0.9rem;
-            transform: translateY(100%);
-            transition: 0.3s;
+            letter-spacing: 0.5px;
+            margin-left: 0.5rem;
+            flex: 1;
         }
 
-        .sign:hover .sign-label {
-            transform: translateY(0);
+        .title-text i {
+            color: #bb9af7;
+            font-style: normal;
+            margin: 0 4px;
         }
 
-        /* Distrito 3: Mercado de precios (puestos callejeros) */
-        .market-stalls {
+        .japanese-char {
+            color: #9d7cd8;
+            font-size: 1.1rem;
+            margin-right: 0.3rem;
+        }
+
+        /* contenido principal */
+        .content {
+            padding: 2rem 2rem 2.5rem 2rem;
+        }
+
+        .prompt-line {
             display: flex;
-            gap: 3rem;
             flex-wrap: wrap;
+            margin-bottom: 2rem;
+            border-left: 3px solid #bb9af7;
+            padding-left: 1rem;
+        }
+
+        .prompt {
+            color: #9ece6a;
+            font-weight: bold;
+            margin-right: 0.8rem;
+            white-space: nowrap;
+        }
+
+        .prompt span {
+            color: #e0af68;
+        }
+
+        .command {
+            color: #c0caf5;
+        }
+
+        .command a {
+            color: #7aa2f7;
+            text-decoration: none;
+            border-bottom: 1px dashed #7aa2f7;
+        }
+
+        .command a:hover {
+            color: #bb9af7;
+            border-bottom-style: solid;
+        }
+
+        .ascii-art {
+            color: #565f89;
+            font-size: 0.75rem;
+            line-height: 1.2;
+            margin: 1.5rem 0;
+            white-space: pre;
+            display: flex;
             justify-content: center;
+            border-top: 1px dashed #414868;
+            border-bottom: 1px dashed #414868;
+            padding: 1rem 0;
         }
 
-        .stall {
-            background: rgba(10,10,15,0.8);
-            backdrop-filter: blur(8px);
-            border: 1px solid #333;
-            border-radius: 30px;
-            padding: 2rem;
-            min-width: 260px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .stall::before {
-            content: '';
-            position: absolute;
-            top: -2px;
-            left: -2px;
-            right: -2px;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, #00ffc8, transparent);
-            animation: neonLine 3s infinite;
-        }
-
-        @keyframes neonLine {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
-        }
-
-        .stall h3 {
-            font-size: 1.8rem;
-            font-weight: 200;
-            color: #00ffc8;
-            margin-bottom: 1.5rem;
-            text-align: center;
-        }
-
-        .stall-item {
+        .section-title {
             display: flex;
-            justify-content: space-between;
-            padding: 0.8rem 0;
-            border-bottom: 1px dashed #333;
-        }
-
-        .stall-price {
-            font-size: 1.5rem;
-            font-weight: 200;
-        }
-
-        /* Distrito 4: Torres de estadísticas */
-        .towers {
-            display: flex;
-            gap: 4rem;
-            justify-content: center;
-            align-items: flex-end;
-        }
-
-        .tower {
-            width: 100px;
-            height: 300px;
-            background: linear-gradient(to top, #1a1a1a, #00ffc8 80%);
-            border-radius: 20px 20px 0 0;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
             align-items: center;
-            padding-bottom: 1rem;
-            box-shadow: 0 0 50px #00ffc8;
-            animation: towerGlow 3s infinite alternate;
+            gap: 0.5rem;
+            margin: 1.8rem 0 1rem 0;
+            color: #bb9af7;
+            font-size: 1.2rem;
+            border-bottom: 1px solid #3b4261;
+            padding-bottom: 0.4rem;
         }
 
-        @keyframes towerGlow {
-            from { filter: brightness(0.8); }
-            to { filter: brightness(1.2); }
+        .section-title .arrow {
+            color: #9ece6a;
         }
 
-        .tower:nth-child(2) { height: 250px; background: linear-gradient(to top, #1a1a1a, #c0c0c0 80%); }
-        .tower:nth-child(3) { height: 200px; background: linear-gradient(to top, #1a1a1a, #ffffff 80%); }
-
-        .tower-label {
-            color: white;
-            font-weight: 300;
-            margin-top: 1rem;
+        .grid-projects {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.2rem;
+            margin: 1rem 0;
         }
 
-        /* Elementos callejeros */
-        .street-light {
+        .project-card {
+            background: #1f2335;
+            border: 1px solid #3b4261;
+            border-radius: 8px;
+            padding: 1rem;
+            transition: 0.2s;
+        }
+
+        .project-card:hover {
+            border-color: #bb9af7;
+            box-shadow: 0 0 0 2px rgba(187, 154, 247, 0.2);
+        }
+
+        .project-name {
+            color: #7dcfff;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .project-name::before {
+            content: "📁";
+            color: #e0af68;
+        }
+
+        .project-desc {
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+            color: #a9b1d6;
+        }
+
+        .project-tags {
+            margin-top: 0.7rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+        }
+
+        .tag {
+            background: #2a2f44;
+            color: #bb9af7;
+            font-size: 0.75rem;
+            padding: 0.2rem 0.6rem;
+            border-radius: 12px;
+            border: 1px solid #3b4261;
+        }
+
+        .skill-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem 1.5rem;
+            margin: 1rem 0 0 1rem;
+        }
+
+        .skill-list li {
+            list-style: none;
+            position: relative;
+            padding-left: 1.2rem;
+        }
+
+        .skill-list li::before {
+            content: "⤷";
+            color: #9ece6a;
             position: absolute;
-            bottom: 10px;
-            left: 20px;
-            width: 3px;
-            height: 80px;
-            background: #ffaa33;
-            border-radius: 3px;
-            box-shadow: 0 0 20px #ffaa33;
+            left: 0;
+        }
+
+        .contact-line {
+            background: #1f2335;
+            border-radius: 8px;
+            padding: 1rem;
+            border-left: 4px solid #9ece6a;
+            margin: 1.5rem 0 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .contact-item .icon {
+            color: #bb9af7;
+        }
+
+        .footer-note {
+            margin-top: 2rem;
+            text-align: right;
+            font-size: 0.8rem;
+            color: #565f89;
+            border-top: 1px dashed #414868;
+            padding-top: 1rem;
         }
 
         /* Responsive */
-        @media (max-width: 800px) {
-            .content-card { padding: 1.5rem; }
-            .title { font-size: 3rem; }
-            .video-signs { flex-direction: column; align-items: center; }
-            .market-stalls { flex-direction: column; align-items: center; }
-            .towers { flex-direction: column; align-items: center; gap: 2rem; }
-            .tower { width: 80px; height: 200px; }
+        @media (max-width: 500px) {
+            .content { padding: 1.5rem; }
+            .prompt-line { flex-direction: column; }
         }
     </style>
 </head>
 <body>
-    <div class="city-scroll">
-        <!-- Capas de edificios (fondo 3D) -->
-        <div class="building-layer layer1"></div>
-        <div class="building-layer layer2"></div>
-        <div class="building-layer layer3"></div>
-
-        <!-- Faroles dispersos -->
-        <div class="lantern" style="top: 20%; left: 5%;"></div>
-        <div class="lantern" style="top: 50%; right: 8%;"></div>
-        <div class="lantern" style="bottom: 30%; left: 15%;"></div>
-
-        <!-- DISTRITO 1: PUERTA DE LA CIUDAD -->
-        <div class="district district-1" style="z-index: 10;">
-            <div class="content-card">
-                <h1 class="title">RELIGHTED</h1>
-                <div class="japanese-city">零 · アニメーター · 都市</div>
-                <p style="text-align: center; margin: 2rem 0; color: #aaa;">Roblox Studio Animator · R6 · Blender</p>
-                <div style="display: flex; gap: 1rem; justify-content: center;">
-                    <a href="https://discord.gg/x33ykcPqSY" target="_blank" style="padding: 0.8rem 2rem; border: 1px solid #00ffc8; border-radius: 40px; color: white; text-decoration: none; transition: 0.3s; background: rgba(0,255,200,0.1);">DISCORD</a>
-                </div>
+    <div class="terminal">
+        <div class="title-bar">
+            <div class="dots">
+                <span class="dot red"></span>
+                <span class="dot yellow"></span>
+                <span class="dot green"></span>
             </div>
+            <div class="title-text">
+                <span class="japanese-char">⚡</span> user@scripter:~/portfolio <i>(zsh)</i>
+            </div>
+            <div> 桜</div>
         </div>
 
-        <!-- DISTRITO 2: BARRIO DE LOS VIDEOS (carteles) -->
-        <div class="district" style="z-index: 20;">
-            <div class="content-card">
-                <h2 style="font-size: 2rem; font-weight: 200; text-align: center; margin-bottom: 2rem;">VIDEO DISTRICT</h2>
-                <div class="video-signs">
-                    <div class="sign">
-                        <iframe src="https://www.youtube.com/embed/TB9BlAUvUa8?modestbranding=1&rel=0&showinfo=0" allowfullscreen></iframe>
-                        <div class="sign-label">Two Gun Volley</div>
-                        <a href="https://youtu.be/TB9BlAUvUa8" target="_blank" style="position: absolute; inset: 0; z-index: 5;"></a>
-                    </div>
-                    <div class="sign">
-                        <iframe src="https://www.youtube.com/embed/nlozlhtO_-E?modestbranding=1&rel=0&showinfo=0" allowfullscreen></iframe>
-                        <div class="sign-label">Walk Anim</div>
-                        <a href="https://youtu.be/nlozlhtO_-E" target="_blank" style="position: absolute; inset: 0; z-index: 5;"></a>
-                    </div>
-                    <div class="sign">
-                        <iframe src="https://www.youtube.com/embed/3zpqruFkSgU?modestbranding=1&rel=0&showinfo=0" allowfullscreen></iframe>
-                        <div class="sign-label">Half-Baked</div>
-                        <a href="https://youtu.be/3zpqruFkSgU" target="_blank" style="position: absolute; inset: 0; z-index: 5;"></a>
-                    </div>
+        <div class="content">
+            <!-- Línea de prompt actual -->
+            <div class="prompt-line">
+                <div class="prompt">❯ scripter@portfolio<span>:</span>~$</div>
+                <div class="command">cat about.md | grep " japonés · linux · roblox"</div>
+            </div>
+
+            <!-- Pequeño arte ASCII con monte Fuji y cerezo -->
+            <pre class="ascii-art">
+       /\         🌸  "枯淡の境地" 
+      /  \          (el encanto de lo sencillo)
+     /    \   
+    /   _   \    
+   /___/ \___\   
+    </pre>
+
+            <!-- Sección "About" -->
+            <div class="section-title">
+                <span class="arrow">⤷</span> プロフィール (Perfil)
+            </div>
+            <p style="margin-bottom: 1rem; max-width: 700px;">
+                Scripter especializado en <strong>Roblox Studio</strong> y <strong>Lua</strong>. 
+                Me inspiro en la filosofía <strong>禅 (Zen)</strong> y la estética de las terminales Unix: 
+                código limpio, eficiente y con personalidad. どうぞよろしく。
+            </p>
+
+            <!-- Habilidades con estilo "ls -l" -->
+            <div class="section-title">
+                <span class="arrow">⤷</span> スキル (Skills)  <span style="font-size:0.8rem; margin-left:auto; color:#565f89;">drwxr-xr-x</span>
+            </div>
+            <ul class="skill-list">
+                <li>Lua / Luau (Roblox)</li>
+                <li>Roblox Studio · モジュール</li>
+                <li>Diseño de sistemas de combate</li>
+                <li>GUI animadas (Drafting/Canvas)</li>
+                <li>Git & trabajo en equipo</li>
+                <li>Principios 和 (armonía) en UI/UX</li>
+            </ul>
+
+            <!-- Proyectos destacados (grid) -->
+            <div class="section-title">
+                <span class="arrow">⤷</span> 作品 (Proyectos)
+            </div>
+            <div class="grid-projects">
+                <div class="project-card">
+                    <div class="project-name">Sakura Raid System</div>
+                    <div class="project-desc">Sistema de combate con combos, dash y partículas de cerezo. Optimizado para 50 jugadores.</div>
+                    <div class="project-tags"><span class="tag">Lua</span><span class="tag">combat</span><span class="tag">Raycast</span></div>
+                </div>
+                <div class="project-card">
+                    <div class="project-name">Zen Inventory</div>
+                    <div class="project-desc">Interfaz limpia tipo terminal para inventarios, con animaciones suaves y organización automática.</div>
+                    <div class="project-tags"><span class="tag">UI</span><span class="tag">Tween</span><span class="tag">Modules</span></div>
+                </div>
+                <div class="project-card">
+                    <div class="project-name">Torii Gates</div>
+                    <div class="project-desc">Generador procedural de puertas torii y templos japoneses. Usado en 5+ juegos.</div>
+                    <div class="project-tags"><span class="tag">Terrain</span><span class="tag">Procedural</span><span class="tag">Modeling</span></div>
                 </div>
             </div>
-        </div>
 
-        <!-- DISTRITO 3: MERCADO DE PRECIOS -->
-        <div class="district" style="z-index: 30;">
-            <div class="content-card">
-                <h2 style="font-size: 2rem; font-weight: 200; text-align: center; margin-bottom: 2rem;">PRICE MARKET</h2>
-                <div class="market-stalls">
-                    <div class="stall">
-                        <h3>RIG</h3>
-                        <div class="stall-item"><span>1 Rig R6</span> <span class="stall-price">500<small style="font-size:0.8rem;">R$</small></span></div>
-                        <div class="stall-item"><span>2 Rigs R6</span> <span class="stall-price">625<small>R$</small></span></div>
-                    </div>
-                    <div class="stall">
-                        <h3>CUTSCENE</h3>
-                        <div class="stall-item"><span>1 Rig R6</span> <span class="stall-price">1000<small>R$</small></span></div>
-                        <div class="stall-item"><span>2 Rigs R6</span> <span class="stall-price">1250<small>R$</small></span></div>
-                    </div>
-                </div>
-                <p style="text-align: center; margin-top: 2rem; color: #888;">contact: xrelighted</p>
+            <!-- Contacto estilo "ifconfig" o "netstat" -->
+            <div class="section-title">
+                <span class="arrow">⤷</span> 連絡先 (Contacto)
+            </div>
+            <div class="contact-line">
+                <div class="contact-item"><span class="icon">✉️</span> <a href="mailto:scripter@sakura.dev" style="color:#c0caf5;">scripter@sakura.dev</a></div>
+                <div class="contact-item"><span class="icon">🐙</span> <a href="#" style="color:#c0caf5;">github.com/scripter-roblox</a></div>
+                <div class="contact-item"><span class="icon">💬</span> Discord: <span style="color:#9ece6a;">sakura_scripter</span></div>
+            </div>
+
+            <!-- Prompt de despedida -->
+            <div class="prompt-line" style="margin-top: 2rem; border-left-color: #9ece6a;">
+                <div class="prompt">❯ scripter@portfolio<span>:</span>~$</div>
+                <div class="command">echo "ご閲覧ありがとうございました"</div>
+            </div>
+            <div style="color: #9ece6a; margin-left: 2.2rem;">→  Gracias por visitar. またね ✨</div>
+
+            <div class="footer-note">
+                <span>⛩️  last login: 桜 2025-03-01 15:42:17</span>
             </div>
         </div>
-
-        <!-- DISTRITO 4: TORRES DE ESTADÍSTICAS -->
-        <div class="district" style="z-index: 40;">
-            <div class="content-card">
-                <h2 style="font-size: 2rem; font-weight: 200; text-align: center; margin-bottom: 2rem;">DATA TOWERS</h2>
-                <div class="towers">
-                    <div class="tower">
-                        <div class="tower-label">EFFICIENCY</div>
-                        <div style="font-size: 2rem;">⚡</div>
-                    </div>
-                    <div class="tower">
-                        <div class="tower-label">QUALITY</div>
-                        <div style="font-size: 2rem;">🔝</div>
-                    </div>
-                    <div class="tower">
-                        <div class="tower-label">FAST</div>
-                        <div style="font-size: 2rem;">💨</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Farola callejera -->
-        <div class="street-light"></div>
     </div>
-
-    <!-- Botón flotante de Discord (otro) -->
-    <a href="https://discord.gg/b79Gt3x4y2" target="_blank" style="position: fixed; bottom: 20px; right: 20px; width: 50px; height: 50px; background: rgba(0,0,0,0.5); backdrop-filter: blur(8px); border: 1px solid #00ffc8; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #00ffc8; font-size: 1.5rem; text-decoration: none; z-index: 1000; transition: 0.3s; animation: pulse 3s infinite;">💬</a>
-
-    <style>
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(0,255,200,0.3); }
-            70% { box-shadow: 0 0 0 15px rgba(0,255,200,0); }
-            100% { box-shadow: 0 0 0 0 rgba(0,255,200,0); }
-        }
-    </style>
-
-    <script>
-        // Efecto de parallax en faroles
-        window.addEventListener('scroll', () => {
-            const scrollY = window.scrollY;
-            document.querySelectorAll('.lantern').forEach((el, i) => {
-                el.style.transform = `translateY(${scrollY * 0.02 * (i+1)}px)`;
-            });
-            document.querySelector('.street-light').style.transform = `translateY(${scrollY * 0.01}px)`;
-        });
-
-        // Generar algunas partículas (lluvia de datos)
-        for (let i = 0; i < 30; i++) {
-            const p = document.createElement('div');
-            p.style.position = 'fixed';
-            p.style.width = '1px';
-            p.style.height = '1px';
-            p.style.background = '#00ffc8';
-            p.style.boxShadow = '0 0 5px #00ffc8';
-            p.style.left = Math.random() * 100 + '%';
-            p.style.top = Math.random() * 100 + '%';
-            p.style.opacity = Math.random() * 0.3;
-            p.style.animation = `rain ${Math.random() * 5 + 5}s linear infinite`;
-            p.style.zIndex = '10000';
-            p.style.pointerEvents = 'none';
-            document.body.appendChild(p);
-        }
-
-        const style = document.createElement('style');
-        style.innerHTML = `
-            @keyframes rain {
-                from { transform: translateY(-100vh); }
-                to { transform: translateY(100vh); }
-            }
-        `;
-        document.head.appendChild(style);
-    </script>
 </body>
 </html>
