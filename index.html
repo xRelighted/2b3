@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>零 / RELIGHTED · DATA</title>
+    <title>relighted / data</title>
     <style>
         * {
             margin: 0;
@@ -12,483 +12,487 @@
         }
 
         body {
-            background: #050505;
-            color: #eaeaea;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: #0b0b0e;
+            color: #e5e5e5;
+            font-family: 'Inter', 'Noto Sans JP', sans-serif;
             overflow-x: hidden;
             min-height: 100vh;
+            line-height: 1.5;
         }
 
-        /* Canvas de fondo (datos líquidos) */
-        #canvas-bg {
+        /* Fondo con textura de papel japones y luz difusa */
+        body::before {
+            content: '';
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: 0;
+            background-image: 
+                radial-gradient(circle at 30% 40%, rgba(180, 180, 200, 0.02) 0%, transparent 40%),
+                radial-gradient(circle at 70% 80%, rgba(0, 255, 200, 0.02) 0%, transparent 50%),
+                repeating-linear-gradient(45deg, rgba(255,255,255,0.003) 0px, rgba(255,255,255,0.003) 2px, transparent 2px, transparent 8px);
             pointer-events: none;
-            opacity: 0.4;
+            z-index: 0;
         }
 
-        /* Contenedor principal con scroll */
-        .scroll-container {
+        /* Partículas muy tenues */
+        .particle-field {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            box-shadow: 0 0 4px rgba(0,255,200,0.2);
+            animation: drift 40s infinite linear;
+        }
+
+        @keyframes drift {
+            from { transform: translateY(0) translateX(0); opacity: 0; }
+            10% { opacity: 0.4; }
+            90% { opacity: 0.4; }
+            to { transform: translateY(-100vh) translateX(20px); opacity: 0; }
+        }
+
+        /* Contenedor principal con scroll suave */
+        .scene {
             position: relative;
             z-index: 10;
-            height: 100vh;
-            overflow-y: scroll;
-            scroll-snap-type: y mandatory;
-            scroll-behavior: smooth;
-        }
-
-        /* Cada sección ocupa toda la pantalla (scroll snap) */
-        .section {
-            scroll-snap-align: start;
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
+            max-width: 1400px;
+            margin: 0 auto;
             padding: 2rem;
         }
 
-        /* Tarjetas flotantes con estilo japonés digital */
-        .floating-card {
-            background: rgba(10, 10, 15, 0.7);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.03);
-            border-radius: 32px;
-            padding: 2.5rem;
-            max-width: 700px;
-            width: 100%;
-            box-shadow: 0 25px 50px -12px rgba(0, 255, 200, 0.1);
-            transition: transform 0.4s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .floating-card::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            border-radius: 32px;
-            padding: 2px;
-            background: linear-gradient(145deg, rgba(255,255,255,0.1), rgba(0,255,200,0.2));
-            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            -webkit-mask-composite: xor;
-            mask-composite: exclude;
-            pointer-events: none;
-        }
-
-        /* Kanji animado */
-        .kanji-bg {
+        /* Elementos japoneses flotantes */
+        .japanese-char {
             position: absolute;
             font-size: 15vw;
             font-weight: 900;
             color: rgba(255,255,255,0.02);
             white-space: nowrap;
-            user-select: none;
             pointer-events: none;
             z-index: -1;
-            animation: floatKanji 20s infinite linear;
+            animation: floatKanji 30s infinite alternate ease-in-out;
         }
 
         @keyframes floatKanji {
-            0% { transform: translateX(-10%) rotate(0deg); }
-            50% { transform: translateX(10%) rotate(5deg); }
-            100% { transform: translateX(-10%) rotate(0deg); }
+            from { transform: translateY(-5%) translateX(-2%) rotate(-1deg); }
+            to { transform: translateY(5%) translateX(2%) rotate(1deg); }
         }
 
-        /* Título principal con efecto glitch digital */
-        .glitch {
-            font-size: 5rem;
-            font-weight: 300;
-            text-transform: uppercase;
-            position: relative;
-            text-shadow: 
-                0.05em 0 0 rgba(0,255,200,0.3),
-                -0.05em -0.025em 0 rgba(255,0,255,0.2);
-            animation: glitch 5s infinite;
-            letter-spacing: 0.15em;
-        }
-
-        @keyframes glitch {
-            0%, 100% { transform: translate(0); }
-            2% { transform: translate(-2px, 1px); }
-            4% { transform: translate(2px, -1px); }
-            6% { transform: translate(0); }
-        }
-
-        .sub-glitch {
-            font-size: 1.2rem;
-            color: rgba(255,255,255,0.5);
-            letter-spacing: 0.3em;
-            margin-top: 0.5rem;
-        }
-
-        /* Grid de videos asimétrica */
-        .video-grid {
-            display: grid;
-            grid-template-columns: 1.2fr 0.8fr 1fr;
-            gap: 1.5rem;
-            width: 100%;
-            max-width: 1300px;
-            margin: 0 auto;
-        }
-
-        .video-item {
-            background: rgba(0,0,0,0.4);
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(255,255,255,0.05);
-            border-radius: 24px;
-            overflow: hidden;
-            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
-            position: relative;
-            aspect-ratio: 16/9;
-        }
-
-        .video-item:nth-child(2) {
-            transform: translateY(30px);
-        }
-
-        .video-item:nth-child(3) {
-            transform: translateY(60px);
-        }
-
-        .video-item:hover {
-            transform: translateY(-10px) scale(1.02);
-            border-color: rgba(0,255,200,0.5);
-            box-shadow: 0 30px 40px -20px #00ffc8;
-        }
-
-        .video-item iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-            opacity: 0.85;
-            transition: opacity 0.4s;
-        }
-
-        .video-item:hover iframe {
-            opacity: 1;
-        }
-
-        .video-label {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            padding: 1rem;
-            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
-            color: white;
-            font-weight: 300;
-            font-size: 0.9rem;
-            transform: translateY(100%);
-            transition: transform 0.3s;
-        }
-
-        .video-item:hover .video-label {
-            transform: translateY(0);
-        }
-
-        /* Precios estilo terminal */
-        .pricing-panel {
+        /* Header flotante con minimalismo extremo */
+        .header-zone {
+            min-height: 100vh;
             display: flex;
-            gap: 2rem;
-            flex-wrap: wrap;
+            flex-direction: column;
             justify-content: center;
+            align-items: center;
+            position: relative;
+            text-align: center;
         }
 
-        .pricing-card {
-            background: rgba(0,0,0,0.6);
+        .name {
+            font-size: clamp(3rem, 15vw, 8rem);
+            font-weight: 200;
+            letter-spacing: 0.3em;
+            color: #f0f0f0;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 0 20px rgba(0,255,200,0.1);
+            animation: breathe 6s infinite;
+        }
+
+        @keyframes breathe {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.9; transform: scale(1.02); }
+        }
+
+        .kanji-sub {
+            font-size: 1.2rem;
+            color: #aaa;
+            letter-spacing: 0.5em;
+            margin-bottom: 3rem;
+        }
+
+        .discord-link {
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(0,0,0,0.2);
             backdrop-filter: blur(8px);
-            border: 1px solid #2a2a2a;
-            border-radius: 30px;
-            padding: 2rem;
-            min-width: 260px;
+            padding: 0.8rem 2.5rem;
+            border-radius: 40px;
+            color: #fff;
+            text-decoration: none;
+            font-weight: 300;
+            letter-spacing: 0.1em;
             transition: 0.4s;
             position: relative;
             overflow: hidden;
         }
 
-        .pricing-card::after {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(0,255,200,0.1) 0%, transparent 70%);
-            opacity: 0;
-            transition: opacity 0.6s;
+        .discord-link:hover {
+            border-color: #00ffc8;
+            background: rgba(0,255,200,0.1);
+            box-shadow: 0 0 30px rgba(0,255,200,0.2);
         }
 
-        .pricing-card:hover::after {
+        /* Zona de videos: collage asimétrico */
+        .video-collage {
+            min-height: 100vh;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: 2rem;
+            padding: 4rem 0;
+            position: relative;
+        }
+
+        .video-mask {
+            width: 300px;
+            height: 180px;
+            border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+            overflow: hidden;
+            transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+            box-shadow: 0 20px 30px -15px rgba(0,0,0,0.5);
+            position: relative;
+            filter: grayscale(30%);
+        }
+
+        .video-mask:nth-child(2) {
+            border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+            width: 350px;
+            height: 200px;
+            margin-top: -50px;
+        }
+
+        .video-mask:nth-child(3) {
+            border-radius: 40% 60% 70% 30% / 40% 50% 50% 60%;
+            width: 280px;
+            height: 190px;
+            margin-bottom: -30px;
+        }
+
+        .video-mask:hover {
+            border-radius: 50%;
+            transform: scale(1.05) rotate(2deg);
+            filter: grayscale(0%);
+            box-shadow: 0 0 0 2px #00ffc8, 0 30px 40px -15px #00ffc8;
+        }
+
+        .video-mask iframe {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border: none;
+            pointer-events: none;
+        }
+
+        .video-mask a {
+            position: absolute;
+            inset: 0;
+            z-index: 10;
+        }
+
+        .video-label {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(4px);
+            padding: 0.3rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: white;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .video-mask:hover .video-label {
             opacity: 1;
         }
 
-        .pricing-card:hover {
-            border-color: #00ffc8;
-            transform: scale(1.05) translateY(-10px);
-        }
-
-        .pricing-title {
-            font-size: 1.8rem;
-            font-weight: 200;
-            margin-bottom: 1.5rem;
-            color: #00ffc8;
-            letter-spacing: 2px;
-        }
-
-        .pricing-item {
+        /* Sección de precios como haikus visuales */
+        .pricing-haiku {
+            min-height: 100vh;
             display: flex;
-            justify-content: space-between;
-            padding: 0.8rem 0;
-            border-bottom: 1px dashed #333;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 4rem;
         }
 
-        .pricing-item:last-child {
-            border: none;
+        .haiku-card {
+            display: flex;
+            gap: 2rem;
+            background: rgba(255,255,255,0.02);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 100px;
+            padding: 1rem 2rem;
+            width: fit-content;
+            transition: 0.3s;
         }
 
-        .price {
-            font-size: 1.6rem;
+        .haiku-card:hover {
+            border-color: #00ffc8;
+            background: rgba(0,255,200,0.05);
+        }
+
+        .haiku-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0 1.5rem;
+            border-right: 1px dashed #333;
+        }
+
+        .haiku-item:last-child {
+            border-right: none;
+        }
+
+        .haiku-desc {
+            font-size: 0.9rem;
+            color: #aaa;
+            font-weight: 300;
+            white-space: nowrap;
+        }
+
+        .haiku-price {
+            font-size: 2rem;
             font-weight: 200;
-            color: white;
+            color: #00ffc8;
+            line-height: 1;
         }
 
-        .price small {
+        .haiku-price small {
             font-size: 0.8rem;
-            color: #888;
+            color: #666;
             margin-left: 0.2rem;
         }
 
-        /* Discord flotante interactivo */
-        .discord-orb {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            width: 70px;
-            height: 70px;
-            background: rgba(0,0,0,0.7);
-            backdrop-filter: blur(8px);
-            border: 1px solid #00ffc8;
-            border-radius: 50%;
+        .haiku-note {
+            color: #777;
+            font-size: 0.9rem;
+            margin-top: 1rem;
+            text-align: center;
+        }
+
+        /* Estadísticas como nubes */
+        .stats-cloud {
             display: flex;
-            align-items: center;
+            flex-wrap: wrap;
             justify-content: center;
-            color: #00ffc8;
-            font-size: 2rem;
-            cursor: pointer;
-            z-index: 1000;
-            transition: all 0.3s;
-            animation: orbPulse 3s infinite;
+            gap: 3rem;
+            min-height: 100vh;
+            align-items: center;
         }
 
-        @keyframes orbPulse {
-            0% { box-shadow: 0 0 0 0 rgba(0,255,200,0.4); }
-            70% { box-shadow: 0 0 0 15px rgba(0,255,200,0); }
-            100% { box-shadow: 0 0 0 0 rgba(0,255,200,0); }
+        .cloud-item {
+            background: rgba(20,20,20,0.3);
+            backdrop-filter: blur(8px);
+            border: 1px solid #333;
+            border-radius: 200px 200px 200px 200px / 200px 200px 200px 200px;
+            padding: 2rem 3rem;
+            text-align: center;
+            transition: 0.4s;
+            animation: floatCloud 6s infinite alternate;
         }
 
-        .discord-orb:hover {
-            transform: scale(1.2) rotate(360deg);
-            background: #00ffc8;
-            color: black;
+        .cloud-item:nth-child(2) { animation-delay: 0.5s; }
+        .cloud-item:nth-child(3) { animation-delay: 1s; }
+
+        @keyframes floatCloud {
+            from { transform: translateY(0); }
+            to { transform: translateY(-15px); }
         }
 
-        /* Elementos decorativos japoneses */
-        .wave-line {
-            position: absolute;
-            bottom: 20px;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, #00ffc8, transparent);
-            animation: waveMove 3s infinite;
+        .cloud-item:hover {
+            border-color: #00ffc8;
+            transform: scale(1.05);
+            background: rgba(0,255,200,0.1);
         }
 
-        @keyframes waveMove {
-            0% { transform: scaleX(0.3); opacity: 0; }
-            50% { transform: scaleX(1); opacity: 1; }
-            100% { transform: scaleX(0.3); opacity: 0; }
+        .cloud-emoji {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .cloud-label {
+            font-size: 1rem;
+            color: #ccc;
+            letter-spacing: 0.2em;
+        }
+
+        /* Elemento decorativo: líneas como hilos */
+        .thread-line {
+            position: fixed;
+            top: 0;
+            left: 10%;
+            width: 1px;
+            height: 100%;
+            background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.05), transparent);
+            z-index: 5;
+            pointer-events: none;
+        }
+
+        .thread-line:nth-child(4) {
+            left: 20%;
+            width: 2px;
+            background: linear-gradient(to bottom, transparent, rgba(0,255,200,0.05), transparent);
+        }
+
+        .thread-line:nth-child(5) {
+            left: 80%;
+            width: 1px;
         }
 
         /* Responsive */
-        @media (max-width: 900px) {
-            .video-grid {
-                grid-template-columns: 1fr;
-                gap: 1rem;
+        @media (max-width: 800px) {
+            .video-mask {
+                width: 250px;
+                height: 150px;
             }
-            .video-item:nth-child(2), .video-item:nth-child(3) {
-                transform: translateY(0);
-            }
-            .glitch {
-                font-size: 3rem;
-            }
-            .pricing-panel {
+            .haiku-card {
                 flex-direction: column;
-                align-items: center;
+                border-radius: 40px;
+                padding: 1.5rem;
+            }
+            .haiku-item {
+                border-right: none;
+                border-bottom: 1px dashed #333;
+                padding: 1rem 0;
+            }
+            .haiku-item:last-child {
+                border-bottom: none;
             }
         }
     </style>
 </head>
 <body>
-    <canvas id="canvas-bg"></canvas>
+    <!-- Líneas decorativas fijas -->
+    <div class="thread-line"></div>
+    <div class="thread-line"></div>
+    <div class="thread-line"></div>
 
-    <div class="scroll-container">
-        <!-- SECCIÓN 1: HERO con kanji flotante -->
-        <section class="section">
-            <div class="kanji-bg" style="top: 10%; left: 5%;">零</div>
-            <div class="kanji-bg" style="bottom: 15%; right: 5%; animation-duration: 25s;">魂</div>
-            <div class="floating-card" style="max-width: 800px;">
-                <h1 class="glitch">RELIGHTED</h1>
-                <div class="sub-glitch">ANIMATOR · ROBLOX · BLENDER</div>
-                <p style="margin: 2rem 0; color: #aaa; font-weight: 200; line-height: 1.8;">
-                    Enter the discord server to see all the animations.
-                </p>
-                <a href="https://discord.gg/x33ykcPqSY" target="_blank" style="display: inline-block; padding: 0.8rem 2.5rem; border: 1px solid #00ffc8; border-radius: 40px; color: white; text-decoration: none; transition: 0.3s; background: rgba(0,255,200,0.1);">DISCORD →</a>
+    <!-- Campo de partículas generado por JS -->
+    <div class="particle-field" id="particle-field"></div>
+
+    <!-- Kanji flotantes de fondo -->
+    <div class="japanese-char" style="top: 20%; left: 5%;">零</div>
+    <div class="japanese-char" style="bottom: 30%; right: 3%;">景</div>
+    <div class="japanese-char" style="top: 70%; left: 15%;">静</div>
+
+    <div class="scene">
+        <!-- Zona de inicio -->
+        <div class="header-zone">
+            <h1 class="name">RELIGHTED</h1>
+            <div class="kanji-sub">零 · アニメーター</div>
+            <a href="https://discord.gg/x33ykcPqSY" class="discord-link" target="_blank">DISCORD</a>
+            <p style="margin-top: 2rem; color: #777; font-weight: 200;">Roblox Studio Animator · R6 Specialist · Blender</p>
+        </div>
+
+        <!-- Collage de videos -->
+        <div class="video-collage">
+            <div class="video-mask">
+                <iframe src="https://www.youtube.com/embed/TB9BlAUvUa8?modestbranding=1&rel=0&showinfo=0" allowfullscreen></iframe>
+                <a href="https://youtu.be/TB9BlAUvUa8" target="_blank"></a>
+                <span class="video-label">Two Gun Volley</span>
             </div>
-            <div class="wave-line"></div>
-        </section>
-
-        <!-- SECCIÓN 2: VIDEOS (portafolio) con disposición asimétrica -->
-        <section class="section">
-            <div class="video-grid">
-                <div class="video-item">
-                    <iframe src="https://www.youtube.com/embed/TB9BlAUvUa8?modestbranding=1&rel=0&showinfo=0" allowfullscreen></iframe>
-                    <div class="video-label">Two Gun Volley · Cutscene</div>
-                </div>
-                <div class="video-item">
-                    <iframe src="https://www.youtube.com/embed/nlozlhtO_-E?modestbranding=1&rel=0&showinfo=0" allowfullscreen></iframe>
-                    <div class="video-label">Walk Anim · Rig animation</div>
-                </div>
-                <div class="video-item">
-                    <iframe src="https://www.youtube.com/embed/3zpqruFkSgU?modestbranding=1&rel=0&showinfo=0" allowfullscreen></iframe>
-                    <div class="video-label">Half-Baked · Huh?! Itoshi Sae?..</div>
-                </div>
+            <div class="video-mask">
+                <iframe src="https://www.youtube.com/embed/nlozlhtO_-E?modestbranding=1&rel=0&showinfo=0" allowfullscreen></iframe>
+                <a href="https://youtu.be/nlozlhtO_-E" target="_blank"></a>
+                <span class="video-label">Walk Anim</span>
             </div>
-        </section>
-
-        <!-- SECCIÓN 3: PRECIOS con efecto de datos -->
-        <section class="section">
-            <div class="floating-card" style="max-width: 1100px;">
-                <h2 style="font-size: 2.5rem; font-weight: 200; margin-bottom: 2rem; text-align: center; letter-spacing: 4px;">PRICES</h2>
-                <div class="pricing-panel">
-                    <div class="pricing-card">
-                        <div class="pricing-title">RIG</div>
-                        <div class="pricing-item"><span>1 Rig R6</span> <span class="price">500<small>R$</small></span></div>
-                        <div class="pricing-item"><span>2 Rigs R6</span> <span class="price">625<small>R$</small></span></div>
-                    </div>
-                    <div class="pricing-card">
-                        <div class="pricing-title">CUTSCENE</div>
-                        <div class="pricing-item"><span>1 Rig R6</span> <span class="price">1000<small>R$</small></span></div>
-                        <div class="pricing-item"><span>2 Rigs R6</span> <span class="price">1250<small>R$</small></span></div>
-                    </div>
-                </div>
-                <p style="text-align: center; margin-top: 3rem; color: #666;">Contact me on discord: xrelighted</p>
+            <div class="video-mask">
+                <iframe src="https://www.youtube.com/embed/3zpqruFkSgU?modestbranding=1&rel=0&showinfo=0" allowfullscreen></iframe>
+                <a href="https://youtu.be/3zpqruFkSgU" target="_blank"></a>
+                <span class="video-label">Half-Baked</span>
             </div>
-        </section>
+        </div>
 
-        <!-- SECCIÓN 4: ESTADÍSTICAS con estilo minimalista -->
-        <section class="section">
-            <div style="display: flex; gap: 4rem; flex-wrap: wrap; justify-content: center;">
-                <div class="floating-card" style="padding: 2rem; text-align: center; min-width: 150px;">
-                    <div style="font-size: 3rem; color: #00ffc8;">⚡</div>
-                    <div style="font-size: 1.2rem;">EFFICIENCY</div>
+        <!-- Precios como haikus -->
+        <div class="pricing-haiku">
+            <div class="haiku-card">
+                <div class="haiku-item">
+                    <span class="haiku-desc">1 Rig R6</span>
+                    <span class="haiku-price">500<small>R$</small></span>
                 </div>
-                <div class="floating-card" style="padding: 2rem; text-align: center; min-width: 150px;">
-                    <div style="font-size: 3rem; color: #00ffc8;">🔝</div>
-                    <div style="font-size: 1.2rem;">QUALITY</div>
-                </div>
-                <div class="floating-card" style="padding: 2rem; text-align: center; min-width: 150px;">
-                    <div style="font-size: 3rem; color: #00ffc8;">💨</div>
-                    <div style="font-size: 1.2rem;">FAST</div>
+                <div class="haiku-item">
+                    <span class="haiku-desc">2 Rigs R6</span>
+                    <span class="haiku-price">625<small>R$</small></span>
                 </div>
             </div>
-        </section>
+            <div class="haiku-card">
+                <div class="haiku-item">
+                    <span class="haiku-desc">1 Rig Cutscene</span>
+                    <span class="haiku-price">1000<small>R$</small></span>
+                </div>
+                <div class="haiku-item">
+                    <span class="haiku-desc">2 Rigs Cutscene</span>
+                    <span class="haiku-price">1250<small>R$</small></span>
+                </div>
+            </div>
+            <div class="haiku-note">contact: xrelighted</div>
+        </div>
+
+        <!-- Nube de estadísticas -->
+        <div class="stats-cloud">
+            <div class="cloud-item">
+                <div class="cloud-emoji">⚡</div>
+                <div class="cloud-label">EFFICIENCY</div>
+            </div>
+            <div class="cloud-item">
+                <div class="cloud-emoji">🔝</div>
+                <div class="cloud-label">QUALITY</div>
+            </div>
+            <div class="cloud-item">
+                <div class="cloud-emoji">💨</div>
+                <div class="cloud-label">FAST</div>
+            </div>
+        </div>
     </div>
 
-    <a href="https://discord.gg/b79Gt3x4y2" target="_blank" class="discord-orb" title="Discord">💬</a>
+    <!-- Botón flotante minimalista (otro Discord) -->
+    <a href="https://discord.gg/b79Gt3x4y2" target="_blank" style="position: fixed; bottom: 20px; right: 20px; width: 50px; height: 50px; background: rgba(0,0,0,0.4); backdrop-filter: blur(8px); border: 1px solid #00ffc8; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #00ffc8; font-size: 1.5rem; text-decoration: none; z-index: 100; transition: 0.3s; animation: pulseGlow 3s infinite;">💬</a>
+
+    <style>
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 0 0 rgba(0,255,200,0.3); }
+            70% { box-shadow: 0 0 0 10px rgba(0,255,200,0); }
+            100% { box-shadow: 0 0 0 0 rgba(0,255,200,0); }
+        }
+    </style>
 
     <script>
-        // CANVAS DE FONDO LÍQUIDO (simulación de datos fluyendo)
-        const canvas = document.getElementById('canvas-bg');
-        const ctx = canvas.getContext('2d');
-        let width, height;
-        let particles = [];
-
-        function initCanvas() {
-            width = window.innerWidth;
-            height = window.innerHeight;
-            canvas.width = width;
-            canvas.height = height;
-
-            particles = [];
-            for (let i = 0; i < 50; i++) {
-                particles.push({
-                    x: Math.random() * width,
-                    y: Math.random() * height,
-                    size: Math.random() * 1.5 + 0.5,
-                    speedX: (Math.random() - 0.5) * 0.2,
-                    speedY: (Math.random() - 0.5) * 0.2,
-                    color: `rgba(0, 255, 200, ${Math.random() * 0.2})`
-                });
-            }
+        // Generar partículas sutiles
+        const field = document.getElementById('particle-field');
+        for (let i = 0; i < 40; i++) {
+            const p = document.createElement('div');
+            p.className = 'particle';
+            p.style.left = Math.random() * 100 + '%';
+            p.style.top = Math.random() * 100 + '%';
+            p.style.width = (Math.random() * 2 + 0.5) + 'px';
+            p.style.height = p.style.width;
+            p.style.animationDelay = Math.random() * 20 + 's';
+            p.style.animationDuration = (Math.random() * 30 + 20) + 's';
+            p.style.background = `rgba(0, 255, 200, ${Math.random() * 0.3})`;
+            field.appendChild(p);
         }
 
-        function drawParticles() {
-            ctx.clearRect(0, 0, width, height);
-            ctx.fillStyle = '#050505';
-            ctx.fillRect(0, 0, width, height);
-
-            particles.forEach(p => {
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-                ctx.fillStyle = p.color;
-                ctx.fill();
-
-                p.x += p.speedX;
-                p.y += p.speedY;
-
-                if (p.x < 0 || p.x > width) p.speedX *= -1;
-                if (p.y < 0 || p.y > height) p.speedY *= -1;
-            });
-
-            // Dibujar líneas entre partículas cercanas (efecto de red de datos)
-            ctx.strokeStyle = 'rgba(0, 255, 200, 0.03)';
-            ctx.lineWidth = 0.5;
-            for (let i = 0; i < particles.length; i++) {
-                for (let j = i + 1; j < particles.length; j++) {
-                    const dx = particles[i].x - particles[j].x;
-                    const dy = particles[i].y - particles[j].y;
-                    const dist = Math.sqrt(dx * dx + dy * dy);
-                    if (dist < 150) {
-                        ctx.beginPath();
-                        ctx.moveTo(particles[i].x, particles[i].y);
-                        ctx.lineTo(particles[j].x, particles[j].y);
-                        ctx.stroke();
-                    }
-                }
-            }
-
-            requestAnimationFrame(drawParticles);
-        }
-
-        window.addEventListener('resize', () => {
-            initCanvas();
-        });
-
-        initCanvas();
-        drawParticles();
-
-        // Scroll suave adicional (ya tenemos snap)
-        // Pequeño efecto parallax en kanjis
+        // Parallax suave para kanjis
         window.addEventListener('scroll', () => {
             const scrollY = window.scrollY;
-            const kanjis = document.querySelectorAll('.kanji-bg');
-            kanjis.forEach((k, i) => {
-                k.style.transform = `translateY(${scrollY * 0.1 * (i+1)}px)`;
+            document.querySelectorAll('.japanese-char').forEach((el, i) => {
+                el.style.transform = `translateY(${scrollY * 0.03 * (i+1)}px)`;
             });
         });
     </script>
