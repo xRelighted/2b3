@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>relighted / data</title>
+    <title>relighted / 零 · 都市</title>
     <style>
         * {
             margin: 0;
@@ -12,489 +12,419 @@
         }
 
         body {
-            background-color: #0b0b0e;
-            color: #e5e5e5;
+            background: #030305;
+            color: #e0e0e0;
             font-family: 'Inter', 'Noto Sans JP', sans-serif;
             overflow-x: hidden;
-            min-height: 100vh;
-            line-height: 1.5;
+            height: 100vh;
+            perspective: 1px;
+            transform-style: preserve-3d;
         }
 
-        /* Fondo con textura de papel japones y luz difusa */
-        body::before {
-            content: '';
-            position: fixed;
+        /* El scroll crea la ilusión de moverse por la ciudad */
+        .city-scroll {
+            height: 500vh;
+            position: relative;
+            transform-style: preserve-3d;
+        }
+
+        /* Cada "distrito" ocupa una pantalla pero con profundidad */
+        .district {
+            position: sticky;
             top: 0;
-            left: 0;
+            height: 100vh;
             width: 100%;
-            height: 100%;
-            background-image: 
-                radial-gradient(circle at 30% 40%, rgba(180, 180, 200, 0.02) 0%, transparent 40%),
-                radial-gradient(circle at 70% 80%, rgba(0, 255, 200, 0.02) 0%, transparent 50%),
-                repeating-linear-gradient(45deg, rgba(255,255,255,0.003) 0px, rgba(255,255,255,0.003) 2px, transparent 2px, transparent 8px);
-            pointer-events: none;
-            z-index: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transform-style: preserve-3d;
+            will-change: transform;
         }
 
-        /* Partículas muy tenues */
-        .particle-field {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-            pointer-events: none;
-        }
-
-        .particle {
+        /* Edificios de fondo que se mueven a diferente velocidad */
+        .building-layer {
             position: absolute;
-            width: 1px;
-            height: 1px;
-            background: rgba(255,255,255,0.2);
-            border-radius: 50%;
-            box-shadow: 0 0 4px rgba(0,255,200,0.2);
-            animation: drift 40s infinite linear;
+            inset: 0;
+            background-repeat: repeat-y;
+            background-position: bottom;
+            opacity: 0.2;
+            pointer-events: none;
         }
 
-        @keyframes drift {
-            from { transform: translateY(0) translateX(0); opacity: 0; }
-            10% { opacity: 0.4; }
-            90% { opacity: 0.4; }
-            to { transform: translateY(-100vh) translateX(20px); opacity: 0; }
+        .layer1 { background-image: linear-gradient(90deg, transparent 90%, #00ffc8 90%); background-size: 50px 100px; transform: translateZ(-2px) scale(2); }
+        .layer2 { background-image: radial-gradient(circle at 10% 50%, #fff 1px, transparent 1px); background-size: 80px 80px; transform: translateZ(-1.5px) scale(1.8); opacity: 0.15; }
+        .layer3 { background-image: repeating-linear-gradient(0deg, #2a2a2a 0px, #2a2a2a 2px, transparent 2px, transparent 30px); transform: translateZ(-1px) scale(1.5); opacity: 0.1; }
+
+        /* Faroles japoneses flotantes */
+        .lantern {
+            position: absolute;
+            width: 40px;
+            height: 60px;
+            background: rgba(255, 180, 100, 0.1);
+            border-radius: 20px 20px 10px 10px;
+            box-shadow: 0 0 30px #ffaa33;
+            animation: lanternFloat 6s infinite alternate;
         }
 
-        /* Contenedor principal con scroll suave */
-        .scene {
+        @keyframes lanternFloat {
+            from { transform: translateY(0); }
+            to { transform: translateY(-20px); }
+        }
+
+        /* Contenido de cada distrito */
+        .content-card {
+            background: rgba(5, 5, 10, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            border-radius: 40px;
+            padding: 3rem;
+            max-width: 800px;
+            width: 90%;
+            box-shadow: 0 30px 50px -30px #00ffc8;
+            transform: translateZ(0.5px) scale(1.2);
             position: relative;
             z-index: 10;
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 2rem;
         }
 
-        /* Elementos japoneses flotantes */
-        .japanese-char {
-            position: absolute;
-            font-size: 15vw;
-            font-weight: 900;
-            color: rgba(255,255,255,0.02);
-            white-space: nowrap;
-            pointer-events: none;
-            z-index: -1;
-            animation: floatKanji 30s infinite alternate ease-in-out;
+        /* Distrito 1: Entrada a la ciudad */
+        .district-1 {
+            background: radial-gradient(ellipse at 20% 50%, rgba(0,255,200,0.05), transparent 50%);
         }
 
-        @keyframes floatKanji {
-            from { transform: translateY(-5%) translateX(-2%) rotate(-1deg); }
-            to { transform: translateY(5%) translateX(2%) rotate(1deg); }
-        }
-
-        /* Header flotante con minimalismo extremo */
-        .header-zone {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-            text-align: center;
-        }
-
-        .name {
-            font-size: clamp(3rem, 15vw, 8rem);
+        .title {
+            font-size: 5rem;
             font-weight: 200;
-            letter-spacing: 0.3em;
-            color: #f0f0f0;
-            margin-bottom: 0.5rem;
-            text-shadow: 0 0 20px rgba(0,255,200,0.1);
-            animation: breathe 6s infinite;
+            letter-spacing: 0.2em;
+            text-align: center;
+            text-shadow: 0 0 20px #00ffc8;
+            animation: flicker 5s infinite;
         }
 
-        @keyframes breathe {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.9; transform: scale(1.02); }
+        @keyframes flicker {
+            0%, 100% { opacity: 1; }
+            2% { opacity: 0.2; }
+            4% { opacity: 1; }
+            19% { opacity: 1; }
+            20% { opacity: 0.4; }
+            21% { opacity: 1; }
         }
 
-        .kanji-sub {
+        .japanese-city {
+            text-align: center;
             font-size: 1.2rem;
             color: #aaa;
             letter-spacing: 0.5em;
-            margin-bottom: 3rem;
+            margin-top: 1rem;
         }
 
-        .discord-link {
-            border: 1px solid rgba(255,255,255,0.1);
-            background: rgba(0,0,0,0.2);
-            backdrop-filter: blur(8px);
-            padding: 0.8rem 2.5rem;
-            border-radius: 40px;
-            color: #fff;
-            text-decoration: none;
-            font-weight: 300;
-            letter-spacing: 0.1em;
-            transition: 0.4s;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .discord-link:hover {
-            border-color: #00ffc8;
-            background: rgba(0,255,200,0.1);
-            box-shadow: 0 0 30px rgba(0,255,200,0.2);
-        }
-
-        /* Zona de videos: collage asimétrico */
-        .video-collage {
-            min-height: 100vh;
+        /* Distrito 2: Galería de videos (carteles luminosos) */
+        .video-signs {
             display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            justify-content: center;
             gap: 2rem;
-            padding: 4rem 0;
-            position: relative;
+            flex-wrap: wrap;
+            justify-content: center;
         }
 
-        .video-mask {
-            width: 300px;
-            height: 180px;
-            border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
-            overflow: hidden;
-            transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
-            box-shadow: 0 20px 30px -15px rgba(0,0,0,0.5);
-            position: relative;
-            filter: grayscale(30%);
-        }
-
-        .video-mask:nth-child(2) {
-            border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
-            width: 350px;
-            height: 200px;
-            margin-top: -50px;
-        }
-
-        .video-mask:nth-child(3) {
-            border-radius: 40% 60% 70% 30% / 40% 50% 50% 60%;
+        .sign {
             width: 280px;
-            height: 190px;
-            margin-bottom: -30px;
+            height: 180px;
+            border: 2px solid #00ffc8;
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 0 30px rgba(0,255,200,0.3);
+            transition: 0.4s;
         }
 
-        .video-mask:hover {
-            border-radius: 50%;
-            transform: scale(1.05) rotate(2deg);
-            filter: grayscale(0%);
-            box-shadow: 0 0 0 2px #00ffc8, 0 30px 40px -15px #00ffc8;
-        }
-
-        .video-mask iframe {
+        .sign iframe {
             width: 100%;
             height: 100%;
-            object-fit: cover;
             border: none;
-            pointer-events: none;
+            filter: hue-rotate(90deg) brightness(0.8);
+            transition: 0.4s;
         }
 
-        .video-mask a {
-            position: absolute;
-            inset: 0;
-            z-index: 10;
+        .sign:hover {
+            transform: scale(1.1) rotate(1deg);
+            box-shadow: 0 0 50px #00ffc8;
         }
 
-        .video-label {
+        .sign:hover iframe {
+            filter: none;
+        }
+
+        .sign-label {
             position: absolute;
-            bottom: 10px;
-            left: 10px;
-            background: rgba(0,0,0,0.6);
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0,0,0,0.7);
             backdrop-filter: blur(4px);
-            padding: 0.3rem 1rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            color: white;
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-
-        .video-mask:hover .video-label {
-            opacity: 1;
-        }
-
-        /* Sección de precios como haikus visuales */
-        .pricing-haiku {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            gap: 4rem;
-        }
-
-        .haiku-card {
-            display: flex;
-            gap: 2rem;
-            background: rgba(255,255,255,0.02);
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(255,255,255,0.05);
-            border-radius: 100px;
-            padding: 1rem 2rem;
-            width: fit-content;
+            padding: 0.5rem;
+            text-align: center;
+            font-size: 0.9rem;
+            transform: translateY(100%);
             transition: 0.3s;
         }
 
-        .haiku-card:hover {
-            border-color: #00ffc8;
-            background: rgba(0,255,200,0.05);
+        .sign:hover .sign-label {
+            transform: translateY(0);
         }
 
-        .haiku-item {
+        /* Distrito 3: Mercado de precios (puestos callejeros) */
+        .market-stalls {
             display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 0 1.5rem;
-            border-right: 1px dashed #333;
-        }
-
-        .haiku-item:last-child {
-            border-right: none;
-        }
-
-        .haiku-desc {
-            font-size: 0.9rem;
-            color: #aaa;
-            font-weight: 300;
-            white-space: nowrap;
-        }
-
-        .haiku-price {
-            font-size: 2rem;
-            font-weight: 200;
-            color: #00ffc8;
-            line-height: 1;
-        }
-
-        .haiku-price small {
-            font-size: 0.8rem;
-            color: #666;
-            margin-left: 0.2rem;
-        }
-
-        .haiku-note {
-            color: #777;
-            font-size: 0.9rem;
-            margin-top: 1rem;
-            text-align: center;
-        }
-
-        /* Estadísticas como nubes */
-        .stats-cloud {
-            display: flex;
+            gap: 3rem;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 3rem;
-            min-height: 100vh;
-            align-items: center;
         }
 
-        .cloud-item {
-            background: rgba(20,20,20,0.3);
+        .stall {
+            background: rgba(10,10,15,0.8);
             backdrop-filter: blur(8px);
             border: 1px solid #333;
-            border-radius: 200px 200px 200px 200px / 200px 200px 200px 200px;
-            padding: 2rem 3rem;
+            border-radius: 30px;
+            padding: 2rem;
+            min-width: 260px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stall::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #00ffc8, transparent);
+            animation: neonLine 3s infinite;
+        }
+
+        @keyframes neonLine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .stall h3 {
+            font-size: 1.8rem;
+            font-weight: 200;
+            color: #00ffc8;
+            margin-bottom: 1.5rem;
             text-align: center;
-            transition: 0.4s;
-            animation: floatCloud 6s infinite alternate;
         }
 
-        .cloud-item:nth-child(2) { animation-delay: 0.5s; }
-        .cloud-item:nth-child(3) { animation-delay: 1s; }
-
-        @keyframes floatCloud {
-            from { transform: translateY(0); }
-            to { transform: translateY(-15px); }
+        .stall-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.8rem 0;
+            border-bottom: 1px dashed #333;
         }
 
-        .cloud-item:hover {
-            border-color: #00ffc8;
-            transform: scale(1.05);
-            background: rgba(0,255,200,0.1);
+        .stall-price {
+            font-size: 1.5rem;
+            font-weight: 200;
         }
 
-        .cloud-emoji {
-            font-size: 3rem;
-            margin-bottom: 0.5rem;
+        /* Distrito 4: Torres de estadísticas */
+        .towers {
+            display: flex;
+            gap: 4rem;
+            justify-content: center;
+            align-items: flex-end;
         }
 
-        .cloud-label {
-            font-size: 1rem;
-            color: #ccc;
-            letter-spacing: 0.2em;
+        .tower {
+            width: 100px;
+            height: 300px;
+            background: linear-gradient(to top, #1a1a1a, #00ffc8 80%);
+            border-radius: 20px 20px 0 0;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            align-items: center;
+            padding-bottom: 1rem;
+            box-shadow: 0 0 50px #00ffc8;
+            animation: towerGlow 3s infinite alternate;
         }
 
-        /* Elemento decorativo: líneas como hilos */
-        .thread-line {
-            position: fixed;
-            top: 0;
-            left: 10%;
-            width: 1px;
-            height: 100%;
-            background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.05), transparent);
-            z-index: 5;
-            pointer-events: none;
+        @keyframes towerGlow {
+            from { filter: brightness(0.8); }
+            to { filter: brightness(1.2); }
         }
 
-        .thread-line:nth-child(4) {
-            left: 20%;
-            width: 2px;
-            background: linear-gradient(to bottom, transparent, rgba(0,255,200,0.05), transparent);
+        .tower:nth-child(2) { height: 250px; background: linear-gradient(to top, #1a1a1a, #c0c0c0 80%); }
+        .tower:nth-child(3) { height: 200px; background: linear-gradient(to top, #1a1a1a, #ffffff 80%); }
+
+        .tower-label {
+            color: white;
+            font-weight: 300;
+            margin-top: 1rem;
         }
 
-        .thread-line:nth-child(5) {
-            left: 80%;
-            width: 1px;
+        /* Elementos callejeros */
+        .street-light {
+            position: absolute;
+            bottom: 10px;
+            left: 20px;
+            width: 3px;
+            height: 80px;
+            background: #ffaa33;
+            border-radius: 3px;
+            box-shadow: 0 0 20px #ffaa33;
         }
 
         /* Responsive */
         @media (max-width: 800px) {
-            .video-mask {
-                width: 250px;
-                height: 150px;
-            }
-            .haiku-card {
-                flex-direction: column;
-                border-radius: 40px;
-                padding: 1.5rem;
-            }
-            .haiku-item {
-                border-right: none;
-                border-bottom: 1px dashed #333;
-                padding: 1rem 0;
-            }
-            .haiku-item:last-child {
-                border-bottom: none;
-            }
+            .content-card { padding: 1.5rem; }
+            .title { font-size: 3rem; }
+            .video-signs { flex-direction: column; align-items: center; }
+            .market-stalls { flex-direction: column; align-items: center; }
+            .towers { flex-direction: column; align-items: center; gap: 2rem; }
+            .tower { width: 80px; height: 200px; }
         }
     </style>
 </head>
 <body>
-    <!-- Líneas decorativas fijas -->
-    <div class="thread-line"></div>
-    <div class="thread-line"></div>
-    <div class="thread-line"></div>
+    <div class="city-scroll">
+        <!-- Capas de edificios (fondo 3D) -->
+        <div class="building-layer layer1"></div>
+        <div class="building-layer layer2"></div>
+        <div class="building-layer layer3"></div>
 
-    <!-- Campo de partículas generado por JS -->
-    <div class="particle-field" id="particle-field"></div>
+        <!-- Faroles dispersos -->
+        <div class="lantern" style="top: 20%; left: 5%;"></div>
+        <div class="lantern" style="top: 50%; right: 8%;"></div>
+        <div class="lantern" style="bottom: 30%; left: 15%;"></div>
 
-    <!-- Kanji flotantes de fondo -->
-    <div class="japanese-char" style="top: 20%; left: 5%;">零</div>
-    <div class="japanese-char" style="bottom: 30%; right: 3%;">景</div>
-    <div class="japanese-char" style="top: 70%; left: 15%;">静</div>
-
-    <div class="scene">
-        <!-- Zona de inicio -->
-        <div class="header-zone">
-            <h1 class="name">RELIGHTED</h1>
-            <div class="kanji-sub">零 · アニメーター</div>
-            <a href="https://discord.gg/x33ykcPqSY" class="discord-link" target="_blank">DISCORD</a>
-            <p style="margin-top: 2rem; color: #777; font-weight: 200;">Roblox Studio Animator · R6 Specialist · Blender</p>
-        </div>
-
-        <!-- Collage de videos -->
-        <div class="video-collage">
-            <div class="video-mask">
-                <iframe src="https://www.youtube.com/embed/TB9BlAUvUa8?modestbranding=1&rel=0&showinfo=0" allowfullscreen></iframe>
-                <a href="https://youtu.be/TB9BlAUvUa8" target="_blank"></a>
-                <span class="video-label">Two Gun Volley</span>
-            </div>
-            <div class="video-mask">
-                <iframe src="https://www.youtube.com/embed/nlozlhtO_-E?modestbranding=1&rel=0&showinfo=0" allowfullscreen></iframe>
-                <a href="https://youtu.be/nlozlhtO_-E" target="_blank"></a>
-                <span class="video-label">Walk Anim</span>
-            </div>
-            <div class="video-mask">
-                <iframe src="https://www.youtube.com/embed/3zpqruFkSgU?modestbranding=1&rel=0&showinfo=0" allowfullscreen></iframe>
-                <a href="https://youtu.be/3zpqruFkSgU" target="_blank"></a>
-                <span class="video-label">Half-Baked</span>
+        <!-- DISTRITO 1: PUERTA DE LA CIUDAD -->
+        <div class="district district-1" style="z-index: 10;">
+            <div class="content-card">
+                <h1 class="title">RELIGHTED</h1>
+                <div class="japanese-city">零 · アニメーター · 都市</div>
+                <p style="text-align: center; margin: 2rem 0; color: #aaa;">Roblox Studio Animator · R6 · Blender</p>
+                <div style="display: flex; gap: 1rem; justify-content: center;">
+                    <a href="https://discord.gg/x33ykcPqSY" target="_blank" style="padding: 0.8rem 2rem; border: 1px solid #00ffc8; border-radius: 40px; color: white; text-decoration: none; transition: 0.3s; background: rgba(0,255,200,0.1);">DISCORD</a>
+                </div>
             </div>
         </div>
 
-        <!-- Precios como haikus -->
-        <div class="pricing-haiku">
-            <div class="haiku-card">
-                <div class="haiku-item">
-                    <span class="haiku-desc">1 Rig R6</span>
-                    <span class="haiku-price">500<small>R$</small></span>
-                </div>
-                <div class="haiku-item">
-                    <span class="haiku-desc">2 Rigs R6</span>
-                    <span class="haiku-price">625<small>R$</small></span>
+        <!-- DISTRITO 2: BARRIO DE LOS VIDEOS (carteles) -->
+        <div class="district" style="z-index: 20;">
+            <div class="content-card">
+                <h2 style="font-size: 2rem; font-weight: 200; text-align: center; margin-bottom: 2rem;">VIDEO DISTRICT</h2>
+                <div class="video-signs">
+                    <div class="sign">
+                        <iframe src="https://www.youtube.com/embed/TB9BlAUvUa8?modestbranding=1&rel=0&showinfo=0" allowfullscreen></iframe>
+                        <div class="sign-label">Two Gun Volley</div>
+                        <a href="https://youtu.be/TB9BlAUvUa8" target="_blank" style="position: absolute; inset: 0; z-index: 5;"></a>
+                    </div>
+                    <div class="sign">
+                        <iframe src="https://www.youtube.com/embed/nlozlhtO_-E?modestbranding=1&rel=0&showinfo=0" allowfullscreen></iframe>
+                        <div class="sign-label">Walk Anim</div>
+                        <a href="https://youtu.be/nlozlhtO_-E" target="_blank" style="position: absolute; inset: 0; z-index: 5;"></a>
+                    </div>
+                    <div class="sign">
+                        <iframe src="https://www.youtube.com/embed/3zpqruFkSgU?modestbranding=1&rel=0&showinfo=0" allowfullscreen></iframe>
+                        <div class="sign-label">Half-Baked</div>
+                        <a href="https://youtu.be/3zpqruFkSgU" target="_blank" style="position: absolute; inset: 0; z-index: 5;"></a>
+                    </div>
                 </div>
             </div>
-            <div class="haiku-card">
-                <div class="haiku-item">
-                    <span class="haiku-desc">1 Rig Cutscene</span>
-                    <span class="haiku-price">1000<small>R$</small></span>
-                </div>
-                <div class="haiku-item">
-                    <span class="haiku-desc">2 Rigs Cutscene</span>
-                    <span class="haiku-price">1250<small>R$</small></span>
-                </div>
-            </div>
-            <div class="haiku-note">contact: xrelighted</div>
         </div>
 
-        <!-- Nube de estadísticas -->
-        <div class="stats-cloud">
-            <div class="cloud-item">
-                <div class="cloud-emoji">⚡</div>
-                <div class="cloud-label">EFFICIENCY</div>
-            </div>
-            <div class="cloud-item">
-                <div class="cloud-emoji">🔝</div>
-                <div class="cloud-label">QUALITY</div>
-            </div>
-            <div class="cloud-item">
-                <div class="cloud-emoji">💨</div>
-                <div class="cloud-label">FAST</div>
+        <!-- DISTRITO 3: MERCADO DE PRECIOS -->
+        <div class="district" style="z-index: 30;">
+            <div class="content-card">
+                <h2 style="font-size: 2rem; font-weight: 200; text-align: center; margin-bottom: 2rem;">PRICE MARKET</h2>
+                <div class="market-stalls">
+                    <div class="stall">
+                        <h3>RIG</h3>
+                        <div class="stall-item"><span>1 Rig R6</span> <span class="stall-price">500<small style="font-size:0.8rem;">R$</small></span></div>
+                        <div class="stall-item"><span>2 Rigs R6</span> <span class="stall-price">625<small>R$</small></span></div>
+                    </div>
+                    <div class="stall">
+                        <h3>CUTSCENE</h3>
+                        <div class="stall-item"><span>1 Rig R6</span> <span class="stall-price">1000<small>R$</small></span></div>
+                        <div class="stall-item"><span>2 Rigs R6</span> <span class="stall-price">1250<small>R$</small></span></div>
+                    </div>
+                </div>
+                <p style="text-align: center; margin-top: 2rem; color: #888;">contact: xrelighted</p>
             </div>
         </div>
+
+        <!-- DISTRITO 4: TORRES DE ESTADÍSTICAS -->
+        <div class="district" style="z-index: 40;">
+            <div class="content-card">
+                <h2 style="font-size: 2rem; font-weight: 200; text-align: center; margin-bottom: 2rem;">DATA TOWERS</h2>
+                <div class="towers">
+                    <div class="tower">
+                        <div class="tower-label">EFFICIENCY</div>
+                        <div style="font-size: 2rem;">⚡</div>
+                    </div>
+                    <div class="tower">
+                        <div class="tower-label">QUALITY</div>
+                        <div style="font-size: 2rem;">🔝</div>
+                    </div>
+                    <div class="tower">
+                        <div class="tower-label">FAST</div>
+                        <div style="font-size: 2rem;">💨</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Farola callejera -->
+        <div class="street-light"></div>
     </div>
 
-    <!-- Botón flotante minimalista (otro Discord) -->
-    <a href="https://discord.gg/b79Gt3x4y2" target="_blank" style="position: fixed; bottom: 20px; right: 20px; width: 50px; height: 50px; background: rgba(0,0,0,0.4); backdrop-filter: blur(8px); border: 1px solid #00ffc8; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #00ffc8; font-size: 1.5rem; text-decoration: none; z-index: 100; transition: 0.3s; animation: pulseGlow 3s infinite;">💬</a>
+    <!-- Botón flotante de Discord (otro) -->
+    <a href="https://discord.gg/b79Gt3x4y2" target="_blank" style="position: fixed; bottom: 20px; right: 20px; width: 50px; height: 50px; background: rgba(0,0,0,0.5); backdrop-filter: blur(8px); border: 1px solid #00ffc8; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #00ffc8; font-size: 1.5rem; text-decoration: none; z-index: 1000; transition: 0.3s; animation: pulse 3s infinite;">💬</a>
 
     <style>
-        @keyframes pulseGlow {
+        @keyframes pulse {
             0% { box-shadow: 0 0 0 0 rgba(0,255,200,0.3); }
-            70% { box-shadow: 0 0 0 10px rgba(0,255,200,0); }
+            70% { box-shadow: 0 0 0 15px rgba(0,255,200,0); }
             100% { box-shadow: 0 0 0 0 rgba(0,255,200,0); }
         }
     </style>
 
     <script>
-        // Generar partículas sutiles
-        const field = document.getElementById('particle-field');
-        for (let i = 0; i < 40; i++) {
-            const p = document.createElement('div');
-            p.className = 'particle';
-            p.style.left = Math.random() * 100 + '%';
-            p.style.top = Math.random() * 100 + '%';
-            p.style.width = (Math.random() * 2 + 0.5) + 'px';
-            p.style.height = p.style.width;
-            p.style.animationDelay = Math.random() * 20 + 's';
-            p.style.animationDuration = (Math.random() * 30 + 20) + 's';
-            p.style.background = `rgba(0, 255, 200, ${Math.random() * 0.3})`;
-            field.appendChild(p);
-        }
-
-        // Parallax suave para kanjis
+        // Efecto de parallax en faroles
         window.addEventListener('scroll', () => {
             const scrollY = window.scrollY;
-            document.querySelectorAll('.japanese-char').forEach((el, i) => {
-                el.style.transform = `translateY(${scrollY * 0.03 * (i+1)}px)`;
+            document.querySelectorAll('.lantern').forEach((el, i) => {
+                el.style.transform = `translateY(${scrollY * 0.02 * (i+1)}px)`;
             });
+            document.querySelector('.street-light').style.transform = `translateY(${scrollY * 0.01}px)`;
         });
+
+        // Generar algunas partículas (lluvia de datos)
+        for (let i = 0; i < 30; i++) {
+            const p = document.createElement('div');
+            p.style.position = 'fixed';
+            p.style.width = '1px';
+            p.style.height = '1px';
+            p.style.background = '#00ffc8';
+            p.style.boxShadow = '0 0 5px #00ffc8';
+            p.style.left = Math.random() * 100 + '%';
+            p.style.top = Math.random() * 100 + '%';
+            p.style.opacity = Math.random() * 0.3;
+            p.style.animation = `rain ${Math.random() * 5 + 5}s linear infinite`;
+            p.style.zIndex = '10000';
+            p.style.pointerEvents = 'none';
+            document.body.appendChild(p);
+        }
+
+        const style = document.createElement('style');
+        style.innerHTML = `
+            @keyframes rain {
+                from { transform: translateY(-100vh); }
+                to { transform: translateY(100vh); }
+            }
+        `;
+        document.head.appendChild(style);
     </script>
 </body>
 </html>
