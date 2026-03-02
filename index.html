@@ -3,22 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Relighted · DATA</title>
+    <title>Relighted · 零</title>
     <style>
-        /* PALETA INSPIRADA EN "DATA" DE TAINY - GRISES Y NEÓN SUTIL */
+        /* ESTÉTICA JAPONESA MODERNA - INSPIRADA EN "DATA" DE TAINY */
         :root {
-            --color-fondo: #0a0a0c;           /* Negro profundo con matiz azul */
-            --color-texto: #f0f0f0;            /* Blanco ligeramente cálido */
-            --color-primario: #c0c0c0;         /* Plata brillante */
-            --color-secundario: #2a2a2a;        /* Gris oscuro para fondos */
-            --color-acento: #00ffc3;            /* Verde neón tipo DATA (toque sutil) */
-            --color-gris-medio: #1e1e1e;         /* Fondo de tarjetas */
-            --color-borde: #3a3a3a;              /* Bordes medios */
-            --color-texto-secundario: #a0a0a0;    /* Gris claro para texto secundario */
-            --transition-smooth: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            --fondo: #0a0a0c;           /* Negro profundo con matiz azul */
+            --texto-principal: #e5e5e5;  /* Blanco roto */
+            --texto-secundario: #9a9a9a;  /* Gris medio */
+            --acento: #c0c0c0;            /* Plata, como el aluminio */
+            --neon: #00ffc3;               /* Verde neón (muy sutil) */
+            --borde: #2a2a2a;               /* Gris oscuro para bordes */
+            --tarjeta: rgba(20, 20, 20, 0.6); /* Fondo semi-transparente */
+            --papel: #111111;                /* Fondo de tarjetas */
         }
 
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400&display=swap');
 
         * {
             margin: 0;
@@ -31,207 +31,194 @@
         }
 
         body {
-            font-family: 'Inter', sans-serif;
-            background: var(--color-fondo);
-            color: var(--color-texto);
-            line-height: 1.6;
+            font-family: 'Inter', 'Noto Sans JP', sans-serif;
+            background: var(--fondo);
+            color: var(--texto-principal);
+            line-height: 1.7;
             overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
             opacity: 0;
-            animation: bodyFadeIn 1.2s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+            animation: fadeBody 1.5s cubic-bezier(0.23, 1, 0.32, 1) forwards;
             position: relative;
         }
 
-        /* Fondo con textura sutil de ruido (como la portada de DATA) */
-        body::after {
+        /* Textura de papel japonés muy sutil (washi) */
+        body::before {
             content: '';
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIj48ZmlsdGVyIGlkPSJmIj48ZmVUdXJidWxlbmNlIHR5cGU9ImZyYWN0YWxOb2lzZSIgYmFzZUZyZXF1ZW5jeT0iLjc0IiBudW1PY3RhdmVzPSIzIiAvPjwvZmlsdGVyPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbHRlcj0idXJsKCNmKSIgb3BhY2l0eT0iMC4wMjUiIC8+PC9zdmc+');
-            opacity: 0.2;
+            background-image: 
+                repeating-linear-gradient(45deg, rgba(255,255,255,0.005) 0px, rgba(255,255,255,0.005) 2px, transparent 2px, transparent 8px);
             pointer-events: none;
             z-index: -1;
         }
 
-        @keyframes bodyFadeIn {
+        @keyframes fadeBody {
             0% { opacity: 0; }
             100% { opacity: 1; }
         }
 
-        /* Esferas de gradiente en grises y neón muy sutil */
-        .gradient-sphere {
-            position: fixed;
-            width: 70vw;
-            height: 70vw;
-            top: -20vw;
-            right: -20vw;
-            background: radial-gradient(circle, rgba(192,192,192,0.08) 0%, transparent 70%);
-            border-radius: 50%;
-            filter: blur(80px);
-            animation: floatSphere 35s infinite ease-in-out;
-            z-index: -1;
-        }
-
-        .gradient-sphere-2 {
-            position: fixed;
-            width: 70vw;
-            height: 70vw;
-            bottom: -20vw;
-            left: -20vw;
-            background: radial-gradient(circle, rgba(0,255,195,0.03) 0%, transparent 70%);
-            border-radius: 50%;
-            filter: blur(100px);
-            animation: floatSphere 30s infinite reverse;
-            z-index: -1;
-        }
-
-        @keyframes floatSphere {
-            0%, 100% { transform: translate(0, 0) scale(1); }
-            33% { transform: translate(3%, 3%) scale(1.05); }
-            66% { transform: translate(-3%, -3%) scale(0.95); }
-        }
-
-        /* Partículas sutiles en gris */
+        /* Partículas flotantes muy tenues */
         .particle {
             position: fixed;
             width: 2px;
             height: 2px;
-            background: rgba(192,192,192,0.2);
+            background: rgba(192, 192, 192, 0.2);
             border-radius: 50%;
             pointer-events: none;
             z-index: -1;
-            animation: particleFloat 20s infinite linear;
+            animation: floatParticle 25s infinite linear;
         }
 
-        @keyframes particleFloat {
+        @keyframes floatParticle {
             0% { transform: translateY(0) translateX(0); opacity: 0; }
-            10% { opacity: 0.3; }
-            90% { opacity: 0.3; }
+            10% { opacity: 0.2; }
+            90% { opacity: 0.2; }
             100% { transform: translateY(-100vh) translateX(20px); opacity: 0; }
         }
 
+        /* Esferas de luz muy sutiles */
+        .glow-sphere {
+            position: fixed;
+            width: 60vw;
+            height: 60vw;
+            top: -20vw;
+            right: -20vw;
+            background: radial-gradient(circle, rgba(192,192,192,0.05) 0%, transparent 70%);
+            border-radius: 50%;
+            filter: blur(80px);
+            animation: floatGlow 30s infinite alternate;
+            z-index: -1;
+        }
+
+        .glow-sphere-2 {
+            position: fixed;
+            width: 50vw;
+            height: 50vw;
+            bottom: -10vw;
+            left: -10vw;
+            background: radial-gradient(circle, rgba(0,255,195,0.02) 0%, transparent 70%);
+            border-radius: 50%;
+            filter: blur(100px);
+            animation: floatGlow 25s infinite alternate-reverse;
+            z-index: -1;
+        }
+
+        @keyframes floatGlow {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(5%, 5%) scale(1.1); }
+        }
+
         .container {
-            max-width: 1400px;
+            max-width: 1200px;
             margin: 0 auto;
             padding: 4rem 2rem;
             position: relative;
             z-index: 2;
         }
 
-        /* HEADER con efecto glitch muy sutil (homenaje a DATA) */
+        /* Header con estilo japonés */
         header {
             text-align: center;
-            margin-bottom: 6rem;
+            margin-bottom: 5rem;
+            padding: 0 1rem;
             opacity: 0;
             animation: fadeUp 1.2s ease 0.2s forwards;
             position: relative;
         }
 
+        /* Línea horizontal como en los sellos japoneses */
         header::after {
             content: '';
-            position: absolute;
-            bottom: -2rem;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 150px;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, var(--color-primario), var(--color-acento), transparent);
-            animation: lineWidth 4s infinite;
-        }
-
-        @keyframes lineWidth {
-            0%, 100% { width: 150px; opacity: 0.3; }
-            50% { width: 250px; opacity: 0.8; }
+            display: block;
+            width: 80px;
+            height: 2px;
+            background: var(--acento);
+            margin: 2rem auto 0;
+            opacity: 0.5;
         }
 
         @keyframes fadeUp {
-            0% { opacity: 0; transform: translateY(30px); }
+            0% { opacity: 0; transform: translateY(20px); }
             100% { opacity: 1; transform: translateY(0); }
         }
 
         h1 {
-            font-size: clamp(3.5rem, 9vw, 6.5rem);
-            font-weight: 300;
-            letter-spacing: -0.03em;
-            margin-bottom: 1rem;
-            color: var(--color-texto);
+            font-size: clamp(3rem, 8vw, 5rem);
+            font-weight: 200;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.5rem;
+            color: var(--texto-principal);
             text-transform: uppercase;
             position: relative;
             display: inline-block;
-            animation: glitch 4s infinite;
         }
 
-        /* Efecto glitch suave */
-        @keyframes glitch {
-            0%, 100% { text-shadow: 0 0 0 transparent; }
-            2% { text-shadow: -2px 0 var(--color-acento), 2px 2px var(--color-primario); }
-            4% { text-shadow: 2px -2px var(--color-acento), -2px 0 var(--color-primario); }
-            5% { text-shadow: 0 0 0 transparent; }
+        /* Versión japonesa del nombre (opcional) */
+        .japanese {
+            font-family: 'Noto Sans JP', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 300;
+            color: var(--texto-secundario);
+            letter-spacing: 0.2em;
+            margin-bottom: 1rem;
         }
 
         .subtitle {
-            font-size: 1.2rem;
-            font-weight: 300;
-            color: var(--color-texto-secundario);
-            max-width: 600px;
+            font-size: 1.1rem;
+            font-weight: 200;
+            color: var(--texto-secundario);
+            max-width: 500px;
             margin: 0 auto 2rem;
-            letter-spacing: 1px;
+            line-height: 1.8;
         }
 
+        /* Badge minimalista */
         .specialty-badge {
             display: inline-flex;
-            gap: 1rem;
-            padding: 0.5rem 1.5rem;
-            background: rgba(30,30,30,0.4);
-            backdrop-filter: blur(8px);
-            border: 1px solid var(--color-borde);
+            gap: 1.5rem;
+            padding: 0.4rem 1.5rem;
+            background: rgba(30, 30, 30, 0.3);
+            backdrop-filter: blur(5px);
+            border: 1px solid var(--borde);
             border-radius: 40px;
-            font-size: 0.9rem;
-            font-weight: 400;
-            color: var(--color-texto-secundario);
+            font-size: 0.85rem;
+            font-weight: 300;
+            color: var(--texto-secundario);
             margin-bottom: 2rem;
-            transition: var(--transition-smooth);
-        }
-
-        .specialty-badge:hover {
-            border-color: var(--color-acento);
-            transform: scale(1.03);
-            background: rgba(0,255,195,0.05);
         }
 
         .specialty-badge span {
             display: flex;
             align-items: center;
-            gap: 0.4rem;
+            gap: 0.3rem;
         }
 
         .specialty-badge i {
-            color: var(--color-acento);
+            color: var(--neon);
             font-style: normal;
-            animation: dotPulse 3s infinite;
+            font-size: 1.2rem;
+            line-height: 1;
+            opacity: 0.7;
         }
 
-        @keyframes dotPulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.2; }
-        }
-
+        /* Discord card - estilo shoji (papel) */
         .discord-card {
             display: inline-flex;
             align-items: center;
             gap: 1rem;
-            padding: 0.8rem 2.2rem;
-            background: rgba(20,20,20,0.5);
-            backdrop-filter: blur(8px);
-            border: 1px solid var(--color-borde);
-            border-radius: 50px;
-            color: var(--color-texto);
+            padding: 0.7rem 2rem;
+            background: rgba(20, 20, 20, 0.7);
+            backdrop-filter: blur(4px);
+            border: 1px solid var(--borde);
+            border-radius: 40px;
+            color: var(--texto-principal);
             text-decoration: none;
-            transition: var(--transition-smooth);
+            transition: all 0.4s;
             margin: 2rem 0;
             position: relative;
             overflow: hidden;
@@ -240,25 +227,24 @@
         .discord-card::before {
             content: '';
             position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(0,255,195,0.1) 0%, transparent 70%);
-            opacity: 0;
-            transition: opacity 0.6s;
-            pointer-events: none;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0,255,195,0.1), transparent);
+            transition: left 0.6s;
         }
 
         .discord-card:hover::before {
-            opacity: 1;
+            left: 100%;
         }
 
         .discord-card:hover {
-            border-color: var(--color-acento);
-            transform: scale(1.03);
+            border-color: var(--neon);
+            transform: scale(1.02);
         }
 
+        /* Grid de videos - diseño limpio */
         .videos-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -267,31 +253,30 @@
         }
 
         .video-card {
-            background: rgba(20,20,20,0.6);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--color-borde);
-            border-radius: 24px;
+            background: var(--tarjeta);
+            backdrop-filter: blur(8px);
+            border: 1px solid var(--borde);
+            border-radius: 16px;
             overflow: hidden;
-            transition: var(--transition-smooth);
+            transition: all 0.4s;
             opacity: 0;
             animation: cardAppear 0.8s forwards;
             animation-fill-mode: forwards;
-            position: relative;
         }
 
         .video-card:nth-child(1) { animation-delay: 0.2s; }
-        .video-card:nth-child(2) { animation-delay: 0.4s; }
-        .video-card:nth-child(3) { animation-delay: 0.6s; }
+        .video-card:nth-child(2) { animation-delay: 0.3s; }
+        .video-card:nth-child(3) { animation-delay: 0.4s; }
 
         @keyframes cardAppear {
-            0% { opacity: 0; transform: translateY(30px); }
+            0% { opacity: 0; transform: translateY(20px); }
             100% { opacity: 1; transform: translateY(0); }
         }
 
         .video-card:hover {
-            transform: translateY(-8px) scale(1.01);
-            border-color: var(--color-acento);
-            box-shadow: 0 30px 40px -25px rgba(0,255,195,0.2);
+            transform: translateY(-4px);
+            border-color: var(--acento);
+            box-shadow: 0 15px 25px -15px rgba(192,192,192,0.2);
         }
 
         .video-wrapper {
@@ -309,13 +294,13 @@
             width: 100%;
             height: 100%;
             border: none;
-            opacity: 0.85;
+            opacity: 0.9;
             transition: opacity 0.4s, transform 0.6s;
         }
 
         .video-card:hover iframe {
             opacity: 1;
-            transform: scale(1.03);
+            transform: scale(1.02);
         }
 
         .video-overlay {
@@ -329,39 +314,41 @@
         }
 
         .video-info {
-            padding: 1.5rem;
+            padding: 1.2rem;
         }
 
         .video-titulo {
-            font-size: 1.2rem;
-            font-weight: 500;
-            margin-bottom: 0.3rem;
-            color: var(--color-texto);
+            font-size: 1rem;
+            font-weight: 400;
+            margin-bottom: 0.2rem;
+            color: var(--texto-principal);
+            letter-spacing: 0.5px;
         }
 
         .video-descripcion {
-            font-size: 0.9rem;
-            color: var(--color-texto-secundario);
+            font-size: 0.85rem;
+            color: var(--texto-secundario);
             font-weight: 300;
         }
 
+        /* Sección de precios con líneas horizontales */
         .precios {
-            margin: 8rem 0;
-            padding: 4rem;
-            background: rgba(15,15,15,0.5);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--color-borde);
-            border-radius: 40px;
+            margin: 7rem 0;
+            padding: 3rem;
+            background: rgba(10, 10, 12, 0.7);
+            backdrop-filter: blur(8px);
+            border: 1px solid var(--borde);
+            border-radius: 24px;
             position: relative;
         }
 
         .precios h2 {
-            font-size: 2.8rem;
-            font-weight: 300;
+            font-size: 2.2rem;
+            font-weight: 200;
             text-align: center;
             margin-bottom: 1rem;
-            letter-spacing: -0.02em;
-            color: var(--color-texto);
+            letter-spacing: 0.2em;
+            color: var(--texto-principal);
             position: relative;
             display: inline-block;
             left: 50%;
@@ -371,47 +358,47 @@
         .precios h2::after {
             content: '';
             position: absolute;
-            bottom: -10px;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, var(--color-acento), transparent);
+            bottom: -8px;
+            left: 10%;
+            width: 80%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--acento), transparent);
         }
 
         .precios-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 3rem;
-            max-width: 1000px;
-            margin: 3rem auto 0;
+            gap: 2.5rem;
+            max-width: 900px;
+            margin: 2.5rem auto 0;
         }
 
         .precio-categoria {
-            padding: 2rem;
-            background: rgba(25,25,25,0.4);
-            border-radius: 30px;
-            border: 1px solid var(--color-borde);
-            transition: var(--transition-smooth);
+            padding: 1.8rem;
+            background: rgba(30, 30, 30, 0.3);
+            border-radius: 20px;
+            border: 1px solid var(--borde);
+            transition: all 0.3s;
         }
 
         .precio-categoria:hover {
-            border-color: var(--color-acento);
-            transform: translateY(-5px);
+            border-color: var(--neon);
         }
 
         .precio-categoria h3 {
-            font-size: 1.8rem;
+            font-size: 1.5rem;
             font-weight: 300;
-            margin-bottom: 1.5rem;
-            color: var(--color-primario);
+            margin-bottom: 1.2rem;
+            color: var(--acento);
+            letter-spacing: 1px;
         }
 
         .precio-item {
             display: flex;
             justify-content: space-between;
             align-items: baseline;
-            padding: 1rem 0;
-            border-bottom: 1px dashed var(--color-borde);
+            padding: 0.8rem 0;
+            border-bottom: 1px dashed var(--borde);
         }
 
         .precio-item:last-child {
@@ -419,103 +406,95 @@
         }
 
         .precio-desc {
-            font-weight: 400;
-            color: var(--color-texto-secundario);
+            font-weight: 300;
+            color: var(--texto-secundario);
+            font-size: 0.95rem;
         }
 
         .precio-valor {
-            font-size: 1.5rem;
-            font-weight: 300;
-            color: var(--color-acento);
+            font-size: 1.3rem;
+            font-weight: 200;
+            color: var(--texto-principal);
         }
 
         .precio-roblox {
-            font-size: 0.8rem;
-            color: var(--color-texto-secundario);
-            margin-left: 0.3rem;
+            font-size: 0.7rem;
+            color: var(--texto-secundario);
+            margin-left: 0.2rem;
         }
 
         .precio-nota {
             text-align: center;
-            margin-top: 3rem;
-            color: var(--color-texto-secundario);
+            margin-top: 2.5rem;
+            color: var(--texto-secundario);
             font-size: 0.9rem;
-            padding: 1rem;
-            border-top: 1px solid var(--color-borde);
+            font-weight: 200;
+            padding: 0.8rem;
+            border-top: 1px solid var(--borde);
         }
 
+        /* Stats minimalistas */
         .stats {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 2rem;
-            margin: 6rem 0;
+            gap: 1.5rem;
+            margin: 5rem 0;
             text-align: center;
         }
 
         .stat-item {
-            padding: 2rem;
-            background: rgba(20,20,20,0.3);
-            backdrop-filter: blur(8px);
-            border: 1px solid var(--color-borde);
-            border-radius: 30px;
-            transition: var(--transition-smooth);
-            animation: statFloat 4s infinite;
-            animation-delay: calc(var(--i) * 0.2s);
-        }
-
-        .stat-item:nth-child(1) { --i: 0; }
-        .stat-item:nth-child(2) { --i: 1; }
-        .stat-item:nth-child(3) { --i: 2; }
-
-        @keyframes statFloat {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-5px); }
+            padding: 1.5rem;
+            background: rgba(20, 20, 20, 0.3);
+            backdrop-filter: blur(5px);
+            border: 1px solid var(--borde);
+            border-radius: 20px;
+            transition: all 0.3s;
         }
 
         .stat-item:hover {
-            border-color: var(--color-acento);
-            transform: scale(1.02);
+            border-color: var(--neon);
         }
 
         .stat-numero {
-            font-size: 2.8rem;
-            font-weight: 300;
-            color: var(--color-primario);
-            margin-bottom: 0.5rem;
+            font-size: 2.2rem;
+            font-weight: 200;
+            color: var(--acento);
+            margin-bottom: 0.3rem;
         }
 
         .stat-label {
-            font-size: 0.9rem;
-            color: var(--color-texto-secundario);
+            font-size: 0.8rem;
+            color: var(--texto-secundario);
             text-transform: uppercase;
             letter-spacing: 2px;
         }
 
+        /* Botón flotante - minimalista */
         .float-discord {
             position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            width: 60px;
-            height: 60px;
-            background: rgba(30,30,30,0.7);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--color-borde);
+            bottom: 1.8rem;
+            right: 1.8rem;
+            width: 50px;
+            height: 50px;
+            background: rgba(30, 30, 30, 0.7);
+            backdrop-filter: blur(8px);
+            border: 1px solid var(--borde);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--color-texto);
+            color: var(--texto-principal);
             text-decoration: none;
-            font-size: 1.8rem;
-            transition: var(--transition-smooth);
+            font-size: 1.5rem;
+            transition: all 0.4s;
             z-index: 100;
             opacity: 0;
-            animation: fadeIn 1s ease 2s forwards, floatButton 3s infinite;
+            animation: fadeIn 1s ease 2s forwards, floatSoft 3s infinite;
         }
 
-        @keyframes floatButton {
+        @keyframes floatSoft {
             0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
+            50% { transform: scale(1.05); }
         }
 
         @keyframes fadeIn {
@@ -523,37 +502,42 @@
         }
 
         .float-discord:hover {
-            border-color: var(--color-acento);
-            transform: scale(1.15) rotate(360deg);
-            background: var(--color-acento);
+            border-color: var(--neon);
+            transform: scale(1.1) rotate(360deg);
+            background: var(--neon);
             color: black;
         }
 
-        @media (max-width: 968px) {
-            .videos-grid { grid-template-columns: repeat(2, 1fr); }
-            .precios-grid { grid-template-columns: 1fr; }
-        }
-        @media (max-width: 668px) {
-            .videos-grid { grid-template-columns: 1fr; }
-            .stats { grid-template-columns: 1fr; }
-            .container { padding: 2rem 1rem; }
-            h1 { font-size: 3rem; }
-            .precios { padding: 2rem; }
+        /* Responsive */
+        @media (max-width: 768px) {
+            .videos-grid {
+                grid-template-columns: 1fr;
+            }
+            .precios-grid {
+                grid-template-columns: 1fr;
+            }
+            .stats {
+                grid-template-columns: 1fr;
+            }
+            h1 {
+                font-size: 2.5rem;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="gradient-sphere"></div>
-    <div class="gradient-sphere-2"></div>
-    <div id="particles-container"></div>
+    <div class="glow-sphere"></div>
+    <div class="glow-sphere-2"></div>
+    <div id="particles"></div>
 
     <div class="container">
         <header>
             <h1>RELIGHTED</h1>
+            <div class="japanese">零 · アニメーター</div>
             <div class="specialty-badge">
-                <span><i>●</i> ANIMATOR</span>
-                <span><i>●</i> ROBLOX STUDIO</span>
-                <span><i>●</i> BLENDER</span>
+                <span><i>⚡</i> ANIMATOR</span>
+                <span><i>⚡</i> ROBLOX</span>
+                <span><i>⚡</i> BLENDER</span>
             </div>
             <div class="subtitle">
                 Roblox Studio Animator · Enter the discord server to see all the animations.
@@ -561,7 +545,7 @@
             <a href="https://discord.gg/x33ykcPqSY" target="_blank" class="discord-card">
                 <span>⚡</span>
                 <span>DISCORD</span>
-                <span style="opacity:0.6;">→</span>
+                <span>→</span>
             </a>
         </header>
 
@@ -637,24 +621,25 @@
     <a href="https://discord.gg/b79Gt3x4y2" target="_blank" class="float-discord" title="Discord">💬</a>
 
     <script>
+        // Scroll to top on load
         window.onload = function() {
             window.scrollTo(0, 0);
             if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
         };
 
-        // Partículas en grises
-        const container = document.getElementById('particles-container');
-        for (let i = 0; i < 30; i++) {
+        // Partículas flotantes (sutiles)
+        const particlesContainer = document.getElementById('particles');
+        for (let i = 0; i < 20; i++) {
             const p = document.createElement('div');
             p.className = 'particle';
             p.style.left = Math.random() * 100 + '%';
             p.style.top = Math.random() * 100 + '%';
-            p.style.width = (Math.random() * 3 + 1) + 'px';
+            p.style.width = (Math.random() * 2 + 1) + 'px';
             p.style.height = p.style.width;
             p.style.animationDelay = Math.random() * 10 + 's';
             p.style.animationDuration = (Math.random() * 15 + 15) + 's';
-            p.style.background = `rgba(192,192,192,${Math.random() * 0.3 + 0.1})`;
-            container.appendChild(p);
+            p.style.background = `rgba(192,192,192,${Math.random() * 0.2})`;
+            particlesContainer.appendChild(p);
         }
     </script>
 </body>
